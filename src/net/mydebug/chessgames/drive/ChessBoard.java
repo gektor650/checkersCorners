@@ -1,0 +1,242 @@
+package net.mydebug.chessgames.drive;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.util.Log;
+
+import com.badlogic.androidgames.framework.Game;
+import com.badlogic.androidgames.framework.Pixmap;
+import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
+
+import net.mydebug.chessgames.drive.figures.Ai;
+import net.mydebug.chessgames.drive.figures.Figure;
+import net.mydebug.chessgames.drive.figures.Position;
+
+
+public abstract class ChessBoard {
+	private Pixmap chessBoardImage;
+	protected Game game;
+	protected List<Figure>   figures = new ArrayList<Figure>();
+	protected List<Position> tips    = new ArrayList<Position>();
+    Ai AiModel;
+	private float[] pixelToPositionX = new float[9];
+	private float[] pixelToPositionY = new float[9];
+	private final float RAW_BODY_SIZE     = 840;
+	private final float RAW_BODY_PADDING  = 20;
+	private final float RAW_BODY_FIELD    = 100;
+	public final static int CHESSBOARD_FIELDS_COUNT = 8;
+	public static int BOARD_SHOW_TIPS = 1;
+	private int WHOSE_TURN = Figure.WHITE;
+	protected final int ONE_PLAYER = 0;
+	protected final int PLAYER_COLOR = Figure.WHITE;
+	protected final int AI_COLOR     = Figure.BLACK;
+	protected final int TWO_PLAYERS = 1;
+	
+	private int boardWidth;
+	private int boardHeight;
+	private float paddingX = 0;
+	private float paddingY = 0;
+	private float coefficient;
+    
+	private float fieldWidth;
+	private float fieldHeight;
+	private float figureWidth;	
+	private float figureHeight;	
+	private float figurePaddin;	
+	
+	protected int gameMode = ONE_PLAYER;
+	
+	protected int[][] figuresOnBoard = new int[CHESSBOARD_FIELDS_COUNT][CHESSBOARD_FIELDS_COUNT];
+	protected int activeFigure = -1;
+	
+	public ChessBoard(Game game) {
+    	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
+        this.game = game;
+
+
+      	boardWidth = game.getGraphics().getWidth();
+    	paddingY   = ( game.getGraphics().getHeight() - boardWidth ) / 2; 
+        
+        coefficient = boardWidth / RAW_BODY_SIZE ;
+        fieldWidth  = RAW_BODY_FIELD * coefficient;
+        float startPointX  = RAW_BODY_PADDING * coefficient;
+        float startPointY  = RAW_BODY_PADDING * coefficient + paddingY;
+        for(int i = 0 ; i < pixelToPositionX.length ; i++) {
+        	pixelToPositionX[i] = startPointX;
+        	startPointX += fieldWidth;
+        	pixelToPositionY[i] = startPointY;
+        	startPointY += fieldWidth;
+         }
+        fieldHeight = fieldWidth;
+        boardHeight = boardWidth;
+        figureWidth = figureHeight = fieldWidth * 0.8f;
+        figurePaddin = fieldWidth * 0.1f;
+    	this.initializeFigures();
+    	this.setFiguresOnBoard();
+    }
+	// Проверяем,нажали ли на поле
+    public void touch( int x , int y ) {
+    	// устанавливаем значение поля выходящее за пределы, потом будем проверять если поле от 0 до 7 - значит кликнули на клетку
+    	int fieldX = 99;
+    	int fieldY = 99;
+    	int i;
+    	int fieldsCnt = pixelToPositionX.length - 1 ;
+    	for( i = 0 ; i < fieldsCnt ; i++ ) {
+    		if( pixelToPositionX[i] < x && pixelToPositionX[i+1] > x) {
+    			fieldX = i;
+    			break;
+    		}
+    	}
+    	for( i = 0 ; i < fieldsCnt ; i++ ) {
+    		if( pixelToPositionY[i] < y && pixelToPositionY[i+1] > y) {
+    			fieldY = i;
+    			break;
+    		}
+    	}
+    	if( fieldX < 8 && fieldY < 8 ) {
+			press( fieldX , fieldY );
+			setFiguresOnBoard();
+			if( isGameOver() == -1 ) {
+	    		draw();	
+			} else {
+	    		String text = "";
+	    		if( isGameOver() == Figure.WHITE ) {
+	    			text = " White wins!";
+	    		} else if( isGameOver() == Figure.BLACK ){
+	    			text = " Black wins!";
+	    		}
+	    		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight(), 0x33cccccc);
+				game.getGraphics().drawText( "Game over! " + text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 , 15, 0xffff0000);
+			}
+			
+    	}
+    }
+    
+    public int getTurn() {
+    	return WHOSE_TURN;
+    }
+    
+    public void nextTurn() {
+    	if( WHOSE_TURN == Figure.WHITE ) {
+    		WHOSE_TURN = Figure.BLACK;
+    	} else {
+    		WHOSE_TURN = Figure.WHITE;
+    	}
+    	if( this.gameMode == this.ONE_PLAYER ) {
+    		if( WHOSE_TURN != PLAYER_COLOR ) {
+    			this.aiTurn( WHOSE_TURN );
+    		}
+    	}
+    }
+    
+    protected int getFigureIndexByField( int x , int y ) {
+		return figuresOnBoard[x][y];
+    }
+    
+    protected int[][] getFiguresOnBoard() {
+    	return figuresOnBoard;
+    }
+    
+    protected void move( Figure figure , Position position) {
+		figures.get( activeFigure ).setPosition( position.x, position.y);
+    }
+    
+    protected void setFiguresOnBoard() {
+        int i,j;
+    	for( i = 0 ; i < CHESSBOARD_FIELDS_COUNT ; i++ ) {
+    		for( j = 0 ; j < CHESSBOARD_FIELDS_COUNT ; j++ ) {
+    			figuresOnBoard[i][j] = -1;
+    		}
+    	}
+    	for( i = 0 ; i < figures.size() ; i++ ) {
+    		figuresOnBoard[figures.get(i).getX()][figures.get(i).getY()] = i;
+    	}
+    }
+
+    public void draw() {
+    	this.drawBoard();
+    	this.drawTips();
+    	this.drawFigures();
+    	this.drawInfo();
+//    	this.drawGrid();
+    }
+    
+    private int getXPixel( int i ) {
+    	return (int)pixelToPositionX[i] + 1;
+    }
+    
+    private int getYPixel( int i ) {
+    	return (int)pixelToPositionY[i] + 1;
+    }
+    
+    private void drawGrid() {
+    	for( int i = 0 ; i < pixelToPositionX.length ; i++ ) {
+    		game.getGraphics().drawLine( (int)pixelToPositionX[0],(int) pixelToPositionY[i], (int)pixelToPositionX[ pixelToPositionY.length - 1  ], (int)pixelToPositionY[ i ], 0xcc0000ff );
+    		game.getGraphics().drawLine( (int)pixelToPositionX[i],(int) pixelToPositionY[0], (int)pixelToPositionX[i], (int)pixelToPositionY[pixelToPositionY.length - 1], 0xcc0000ff );
+    	}
+    }
+
+	private void drawTips() {
+		if( BOARD_SHOW_TIPS == 1 ) 
+			for( int i = 0 ; i < tips.size() ; i++ ) {
+				highlightField( tips.get(i) , 0xcc00cc00 );	
+				highlightFieldBorder( tips.get(i) ,0xff00ff00);
+			}
+	}
+    
+	private void highlightFieldBorder( Position position , int color ) {
+		int x1 = getXPixel( position.x )  ;
+		int x2 = (int)( getXPixel( position.x ) + fieldHeight )  ;
+		int y1 = getYPixel( position.y ) ;
+		int y2 = (int)( getYPixel( position.y ) + fieldHeight ) ;
+		game.getGraphics().drawLine( x1 , y1 , x1 , y2 , color );
+		game.getGraphics().drawLine( x2 , y1 , x2 , y2 , color );
+		game.getGraphics().drawLine( x1 , y1 , x2 , y1 , color );
+		game.getGraphics().drawLine( x1 , y2 , x2 , y2 , color );
+	}
+
+
+	private void highlightField( Position position , int color ) {
+		game.getGraphics().drawRect( getXPixel( position.x )  , getYPixel( position.y ) , (int) fieldHeight,(int) fieldHeight, color );
+	}
+	
+    private void drawBoard() {
+    	game.getGraphics().drawPixmap( chessBoardImage , paddingX , paddingY , boardWidth , boardHeight );
+    }
+    
+    private void drawFigures() {
+    	int len = figures.size();
+    	for( int i = 0 ; i < len ; i++ ) {
+    		Figure figure = figures.get(i);
+    		Pixmap pixmap;
+    		if( i == activeFigure && figure.getColor() == figures.get(activeFigure).getColor() ) {
+				highlightField( figure.getPosition() ,0x33cccccc);
+				highlightFieldBorder( figure.getPosition() ,0xffcccccc);
+				pixmap = game.getGraphics().newPixmap( figure.getActiveImage() , PixmapFormat.RGB565 );
+    		} else {
+        		pixmap = game.getGraphics().newPixmap( figure.getImage() , PixmapFormat.RGB565 );
+    		}
+    		game.getGraphics().drawPixmap( pixmap  , getXPixel(figure.getX()) + figurePaddin , getYPixel(figure.getY()) + figurePaddin , figureWidth , figureHeight );
+    	}
+    }
+    
+    protected static int getBoardLength() {
+    	return CHESSBOARD_FIELDS_COUNT;
+    }
+    
+    protected void drawInfo() {
+    	
+    }
+    
+    
+    protected abstract void initializeFigures();
+    protected abstract void buildTips( int figureIndex , int x , int y );
+    protected abstract void press( int x , int y );
+    protected abstract void aiTurn( int color );
+    // return color fins figures or -1 when game not over
+    protected abstract int isGameOver(); 
+    
+
+
+}
