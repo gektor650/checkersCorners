@@ -6,7 +6,7 @@ import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.Position;
 
-public class CheckersCornersAi implements Ai{
+public class CheckersCornersAi implements Ai {
 
 	int [][] priorities = new int[ChessBoard.getBoardLength()][ChessBoard.getBoardLength()];
 	

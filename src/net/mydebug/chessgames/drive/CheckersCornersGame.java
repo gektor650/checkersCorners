@@ -1,12 +1,15 @@
 package net.mydebug.chessgames.drive;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import net.mydebug.chessgames.drive.figures.CheckerCorners;
 import net.mydebug.chessgames.drive.figures.Figure;
+import net.mydebug.chessgames.drive.figures.FigureData;
 import net.mydebug.chessgames.drive.figures.Position;
+
 
 import android.util.Log;
 
@@ -26,7 +29,7 @@ public class CheckersCornersGame extends ChessBoard {
 	protected void press(int x, int y) {
 		int index = getFigureIndexByField(x,y);
 		if( activeFigure > -1 ) {
-			if( figures.get( activeFigure ).checkFieldIsEmpty( new Position( x , y ) , getFiguresOnBoard() ) == 1
+			if( this.checkFieldIsEmpty( new Position( x , y )  ) == 1
 					&& getTurn() == figures.get( activeFigure ).getColor() ) {
 				for(int i = 0 ; i < tips.size(); i ++ )
 					if( tips.get(i).x == x && tips.get(i).y == y ) {
@@ -48,13 +51,13 @@ public class CheckersCornersGame extends ChessBoard {
 		int i,j;
 		for( i = 0 ; i < getBoardLength() / 2; i++  ) {
 			for( j = 0 ; j < 3 ; j++ ) {
-				figures.add( new CheckerCorners( Figure.WHITE , i , j ) );				
+				figures.add( new CheckerCorners( Figure.WHITE , i , j , this ) );				
 			}
 		}
 
 		for( i = getBoardLength() / 2 ; i < getBoardLength() ; i++  ) {
 			for( j = 5 ; j < getBoardLength() ; j++ ) {
-				figures.add( new CheckerCorners( Figure.BLACK , i , j ) );				
+				figures.add( new CheckerCorners( Figure.BLACK , i , j , this ) );				
 			}
 		}
 
@@ -62,8 +65,10 @@ public class CheckersCornersGame extends ChessBoard {
 
 	@Override
 	protected void buildTips( int figureIndex , int x , int y ) {
-		if( figures.get(figureIndex).getColor() == getTurn() ) 
-			tips = figures.get(figureIndex).getAviableMoves( getFiguresOnBoard() , figures );
+		if( figures.get(figureIndex).getColor() == getTurn() ) {
+			tips = figures.get(figureIndex).getAviableMoves();
+			tipsDirections = figures.get(figureIndex).getAviableDirections();
+		}
 	}
 	
 	@Override
@@ -99,5 +104,17 @@ public class CheckersCornersGame extends ChessBoard {
 		}
 		return -1;
 	}
+
+	@Override
+	public void setFiguresByFiguresData( ArrayList<FigureData> figureData ) {
+		figures = new ArrayList<Figure>();
+		for( int i = 0 ; i < figureData.size() ; i++ ) {
+			figures.add( new CheckerCorners( figureData.get(i).color, figureData.get(i).x , figureData.get(i).y , this ) );	
+			Log.d( "insert" , figures.get(i).toString() );
+		}
+	
+	}
+
+
 	
 }

@@ -1,62 +1,64 @@
 package net.mydebug.chessgames.drive;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import com.badlogic.androidgames.framework.Game;
 import net.mydebug.chessgames.drive.figures.Figure;
-import net.mydebug.chessgames.drive.figures.Position;
+import net.mydebug.chessgames.drive.figures.FigureData;
+import net.mydebug.chessgames.drive.db.HistoryDb;
 
 public class History implements HistoryInterface {
 	List<Figure> figures = new ArrayList<Figure>();
 	int 		  turnId = 0;
-	int 	      gameId = 0;
+	int 	      gameId = 7;
+	Game 		   game ;
+	HistoryDb historyDb;
 	
-	@Override
-	public void add(  List<Figure> figures  ) {
-		// TODO Auto-generated method stub
-		this.figures = figures;
-		save();
-		turnId++;
+	public History( Game game ) {
+		this.game = game;
+		historyDb = new HistoryDb( game.getActivity() );
 	}
+	
+
 
 	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-		for( int i = 0 ; i < figures.size() ; i++ ) {
+	public void save( ChessBoard board ) {
 
+		figures = board.getFigures();
+		ArrayList<byte[]> data = new ArrayList<byte[]>();
+		for( int i = 0 ; i < figures.size() ; i++ ) {
+			data.add( figures.get(i).getSerialized() );
 		}
 
+		byte[] savedData = Serialize.serialize( data );
+
+		historyDb.addTurn( gameId, ++turnId, savedData ); 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public List<Figure> load() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<FigureData> back( ChessBoard board ) {
+		if( turnId <= 1 ) return null; 
+		historyDb.removeLastTurn();
+		@SuppressWarnings("unchecked")
+		ArrayList<byte[]>  data = (ArrayList)Serialize.deserialize( historyDb.getTurn( gameId , --turnId ) );
+		ArrayList<FigureData>   figures         = new ArrayList<FigureData>();
+		for( int i = 0 ; i < data.size() ; i++) {
+			FigureData figureData = (FigureData)Serialize.deserialize( data.get(i) );
+			figures.add( figureData );
+		}
+		return figures;
 	}
 
+
+
 	@Override
-	public List<Figure> back() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getTurn() {
+		return turnId;
 	}
 	
-	protected class HistoryRow {
-		Position positionFrom ;
-		Position positionTo   ;
-		Figure   figure ;
-	}
-	
-	public static byte[] getBytes(Object obj) throws java.io.IOException {
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	    ObjectOutputStream oos = new ObjectOutputStream(bos);
-	    oos.writeObject(obj);
-	    oos.flush();
-	    oos.close();
-	    bos.close();
-	    byte[] data = bos.toByteArray();
-	    return data;
-	}
 
 }

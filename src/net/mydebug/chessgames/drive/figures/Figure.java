@@ -1,30 +1,33 @@
 package net.mydebug.chessgames.drive.figures;
 
-import java.io.Serializable;
 import java.util.List;
 
+import net.mydebug.chessgames.drive.ChessBoard;
+import net.mydebug.chessgames.drive.Serialize;
 
 
-public abstract class Figure implements Serializable {
+public abstract class Figure  {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
 	public static int WHITE = 1;
 	public static int BLACK = 0;
+	
+	protected int FIGURE_TYPE_ID = 0;
 	
 	protected String image       = null;
 	protected String imageActive = null;
 	protected int x;
 	protected int y;
 	protected int color;
+	protected ChessBoard ChessBoard;
+	protected final int DIRECTION_X  = 0;
+	protected final int DIRECTION_Y  = 1;
 	
-	public Figure( int color , int x , int y ) {
+	public Figure( int color , int x , int y , ChessBoard board ) {
 		this.color = color;
 		this.x     = x;
 		this.y     = y;
+		this.ChessBoard = board;
 	}
 	
 	
@@ -55,7 +58,24 @@ public abstract class Figure implements Serializable {
 	public Position getPosition() {
 		return new Position(x,y);
 	}
-	public abstract List<Position> getAviableMoves( int[][] figuresOnBoard , List<Figure> figures );
-	// -1 - за предлелами поля, 0 - пусто, 1 - занято
-	public abstract int checkFieldIsEmpty( Position position , int[][] figuresOnBoard );
+	
+	public int getType() {
+		return this.FIGURE_TYPE_ID;
+	}
+	
+	public byte[] getSerialized() {
+		byte[] data = Serialize.serialize( new FigureData( this.getX(), this.getY(), this.getColor(), this.getType() ) );
+		return data;
+	}
+
+
+	
+	public abstract List<Position> getAviableMoves( );
+	public abstract List<MoveDirection> getAviableDirections( );
+
+	
+
 }
+
+
+

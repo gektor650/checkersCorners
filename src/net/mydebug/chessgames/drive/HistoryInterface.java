@@ -1,12 +1,13 @@
 package net.mydebug.chessgames.drive;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import net.mydebug.chessgames.drive.figures.Figure;
+import net.mydebug.chessgames.drive.figures.FigureData;
+
+
 
 public interface HistoryInterface {
-	public void add( List<Figure> figures );
-	public void save();
-	public List<Figure> load();
-	public List<Figure> back();
+	public void save(ChessBoard board);
+	public int getTurn();
+	public ArrayList<FigureData> back(ChessBoard board);
 }

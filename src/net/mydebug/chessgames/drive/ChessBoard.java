@@ -1,7 +1,9 @@
 package net.mydebug.chessgames.drive;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 import android.util.Log;
 
@@ -9,17 +11,22 @@ import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
+import net.mydebug.chessgames.MainMenu;
 import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
+import net.mydebug.chessgames.drive.figures.FigureData;
+import net.mydebug.chessgames.drive.figures.MoveDirection;
 import net.mydebug.chessgames.drive.figures.Position;
 
-
-public abstract class ChessBoard {
+public abstract class ChessBoard  {
 	private Pixmap chessBoardImage;
 	protected Game game;
-	protected List<Figure>   figures = new ArrayList<Figure>();
-	protected List<Position> tips    = new ArrayList<Position>();
-    Ai AiModel;
+	
+	protected List<Figure>   figures         = new ArrayList<Figure>();
+	protected List<Position> tips            = new ArrayList<Position>();
+	protected List<MoveDirection> tipsDirections = new ArrayList<MoveDirection>();
+    protected Ai AiModel;
+    protected History history;
 	private float[] pixelToPositionX = new float[9];
 	private float[] pixelToPositionY = new float[9];
 	private final float RAW_BODY_SIZE     = 840;
@@ -74,43 +81,71 @@ public abstract class ChessBoard {
         figurePaddin = fieldWidth * 0.1f;
     	this.initializeFigures();
     	this.setFiguresOnBoard();
+    	history = new History( game );
+    	history.save(this);
     }
-	// Проверяем,нажали ли на поле
+	
+    /** Обрабатываем нажатие на экран
+     * @param x - позиция по горизонтали
+     * @param y - позиция по вертикали
+     */
     public void touch( int x , int y ) {
-    	// устанавливаем значение поля выходящее за пределы, потом будем проверять если поле от 0 до 7 - значит кликнули на клетку
-    	int fieldX = 99;
-    	int fieldY = 99;
-    	int i;
-    	int fieldsCnt = pixelToPositionX.length - 1 ;
-    	for( i = 0 ; i < fieldsCnt ; i++ ) {
-    		if( pixelToPositionX[i] < x && pixelToPositionX[i+1] > x) {
-    			fieldX = i;
-    			break;
+    	// Если нажали на шахматную доску
+    	if( y > paddingY && y < game.getGraphics().getHeight() - paddingY ) {
+        	// устанавливаем значение поля выходящее за пределы, потом будем проверять если поле от 0 до 7 - значит кликнули на клетку
+        	int fieldX = 99;
+        	int fieldY = 99;
+        	int i;
+        	int fieldsCnt = pixelToPositionX.length - 1 ;
+        	for( i = 0 ; i < fieldsCnt ; i++ ) {
+        		if( pixelToPositionX[i] < x && pixelToPositionX[i+1] > x) {
+        			fieldX = i;
+        			break;
+        		}
+        	}
+        	for( i = 0 ; i < fieldsCnt ; i++ ) {
+        		if( pixelToPositionY[i] < y && pixelToPositionY[i+1] > y) {
+        			fieldY = i;
+        			break;
+        		}
+        	}
+        	if( fieldX < CHESSBOARD_FIELDS_COUNT && fieldY < CHESSBOARD_FIELDS_COUNT ) {
+    			press( fieldX , fieldY );
+    			setFiguresOnBoard();
+    			if( isGameOver() == -1 ) {
+    	    		draw();	
+    			} else {
+    	    		String text = "";
+    	    		if( isGameOver() == Figure.WHITE ) {
+    	    			text = " White wins!";
+    	    		} else if( isGameOver() == Figure.BLACK ){
+    	    			text = " Black wins!";
+    	    		}
+    	    		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight(), 0x33cccccc);
+    				game.getGraphics().drawText( "Game over! " + text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 , 15, 0xffff0000);
+    			}
+    			
+        	}
+        //если по вертикали мы попали в зону нижнего меню
+    	} else if( y > game.getGraphics().getHeight() - 32 ) {
+    		// Если нажали в левый нижний угол (иконка "ход назад"
+    		if( x < 32 ) {
+        		ArrayList<FigureData> figureDatas = history.back( this );
+        		if( figureDatas != null ) {
+            		setFiguresByFiguresData( figureDatas );
+            		draw();	
+            		if( gameMode == ONE_PLAYER ) {
+            			nextTurn();
+            		}
+        		}	
+    		// Если нажали в нижний правый угол (иконка выйти в меню)
+    		} else if( x > game.getGraphics().getWidth() - 32) {
+				game.setScreen( new MainMenu( game ) );
     		}
     	}
-    	for( i = 0 ; i < fieldsCnt ; i++ ) {
-    		if( pixelToPositionY[i] < y && pixelToPositionY[i+1] > y) {
-    			fieldY = i;
-    			break;
-    		}
-    	}
-    	if( fieldX < 8 && fieldY < 8 ) {
-			press( fieldX , fieldY );
-			setFiguresOnBoard();
-			if( isGameOver() == -1 ) {
-	    		draw();	
-			} else {
-	    		String text = "";
-	    		if( isGameOver() == Figure.WHITE ) {
-	    			text = " White wins!";
-	    		} else if( isGameOver() == Figure.BLACK ){
-	    			text = " Black wins!";
-	    		}
-	    		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight(), 0x33cccccc);
-				game.getGraphics().drawText( "Game over! " + text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 , 15, 0xffff0000);
-			}
-			
-    	}
+ 
+
+
     }
     
     public int getTurn() {
@@ -134,12 +169,17 @@ public abstract class ChessBoard {
 		return figuresOnBoard[x][y];
     }
     
-    protected int[][] getFiguresOnBoard() {
+    private int[][] getFiguresOnBoard() {
     	return figuresOnBoard;
     }
     
     protected void move( Figure figure , Position position) {
 		figures.get( activeFigure ).setPosition( position.x, position.y);
+		history.save( this );
+    }
+
+    public void setFigures( List<Figure> figures ) {
+    	this.figures = figures;
     }
     
     protected void setFiguresOnBoard() {
@@ -159,6 +199,7 @@ public abstract class ChessBoard {
     	this.drawTips();
     	this.drawFigures();
     	this.drawInfo();
+    	this.drawBottomMenu();
 //    	this.drawGrid();
     }
     
@@ -229,14 +270,40 @@ public abstract class ChessBoard {
     	
     }
     
+    protected void drawBottomMenu() {
+    	Pixmap pixmap;
+    	if( history.getTurn() > 1) {
+        	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
+    		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 , 32 , 32 );
+    	}
+
+
+    	pixmap = game.getGraphics().newPixmap( "pictogram-din-e010-exit-32.png" , PixmapFormat.RGB565 );
+		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 , 32 , 32 );
+		
+    }
     
+    public List<Figure> getFigures() {
+    	return this.figures;
+    }
+	// -1 - за предлелами поля, 0 - пусто, 1 - занято
+	public int checkFieldIsEmpty(Position position ) {
+		if( position.x < 0 || position.x > ChessBoard.CHESSBOARD_FIELDS_COUNT - 1 || position.y < 0 || position.y > ChessBoard.CHESSBOARD_FIELDS_COUNT - 1 ) 
+			return -1;
+		if( figuresOnBoard[position.x ][position.y] == -1 ) 
+			return 1;
+		return 0;
+	}
+	
     protected abstract void initializeFigures();
     protected abstract void buildTips( int figureIndex , int x , int y );
     protected abstract void press( int x , int y );
     protected abstract void aiTurn( int color );
+    protected abstract void setFiguresByFiguresData( ArrayList<FigureData> figureData );
     // return color fins figures or -1 when game not over
     protected abstract int isGameOver(); 
     
+
 
 
 }
