@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
@@ -57,7 +58,7 @@ public abstract class ChessBoard  {
 	protected int[][] figuresOnBoard = new int[CHESSBOARD_FIELDS_COUNT][CHESSBOARD_FIELDS_COUNT];
 	protected int activeFigure = -1;
 	
-	public ChessBoard(Game game) {
+	public ChessBoard(Game game , boolean isNew) {
     	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
         this.game = game;
 
@@ -79,10 +80,15 @@ public abstract class ChessBoard  {
         boardHeight = boardWidth;
         figureWidth = figureHeight = fieldWidth * 0.8f;
         figurePaddin = fieldWidth * 0.1f;
-    	this.initializeFigures();
-    	this.setFiguresOnBoard();
-    	history = new History( game );
-    	history.save(this);
+    	history = new History( game , isNew );
+        if( isNew ) {
+            this.setFiguresOnBoard();
+            this.initializeFigures();
+    		history.save(this);
+        } else {
+        	this.loadGameFromHistory();
+        }
+
     }
 	
     /** Обрабатываем нажатие на экран
@@ -128,16 +134,10 @@ public abstract class ChessBoard  {
         	}
         //если по вертикали мы попали в зону нижнего меню
     	} else if( y > game.getGraphics().getHeight() - 32 ) {
-    		// Если нажали в левый нижний угол (иконка "ход назад"
+    		// Если нажали в левый нижний угол (иконка "ход назад")
     		if( x < 32 ) {
-        		ArrayList<FigureData> figureDatas = history.back( this );
-        		if( figureDatas != null ) {
-            		setFiguresByFiguresData( figureDatas );
-            		draw();	
-            		if( gameMode == ONE_PLAYER ) {
-            			nextTurn();
-            		}
-        		}	
+    			this.loadPrevFromHistory();
+        		draw();	
     		// Если нажали в нижний правый угол (иконка выйти в меню)
     		} else if( x > game.getGraphics().getWidth() - 32) {
 				game.setScreen( new MainMenu( game ) );
@@ -147,6 +147,22 @@ public abstract class ChessBoard  {
 
 
     }
+    
+    public void loadPrevFromHistory() {
+		ArrayList<FigureData> figureDatas = history.back( );
+		if( figureDatas != null ) {
+    		setFiguresByFiguresData( figureDatas );
+    		this.WHOSE_TURN = history.lastWhosTurn();
+		}	
+    }
+
+	public void loadGameFromHistory() {
+		ArrayList<FigureData> figureDatas = history.loadLastTurn( );
+		if( figureDatas != null ) {
+			setFiguresByFiguresData( figureDatas );
+    		this.WHOSE_TURN = history.lastWhosTurn();
+		}	
+	}
     
     public int getTurn() {
     	return WHOSE_TURN;
@@ -195,6 +211,7 @@ public abstract class ChessBoard  {
     }
 
     public void draw() {
+    	game.getGraphics().clear(0xff964009);
     	this.drawBoard();
     	this.drawTips();
     	this.drawFigures();
@@ -202,6 +219,7 @@ public abstract class ChessBoard  {
     	this.drawBottomMenu();
 //    	this.drawGrid();
     }
+    
     
     private int getXPixel( int i ) {
     	return (int)pixelToPositionX[i] + 1;
@@ -267,7 +285,14 @@ public abstract class ChessBoard  {
     }
     
     protected void drawInfo() {
-    	
+		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurn() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xffffffff , Paint.Align.LEFT );
+		game.getGraphics().drawText( "Move "  ,  game.getGraphics().getWidth() / 2 , 20 , 20 , 0xffffffff , Paint.Align.RIGHT );		
+		Pixmap pixmap;
+		if( WHOSE_TURN == 0 ) 
+			pixmap = game.getGraphics().newPixmap( "checkerBlack.png" , PixmapFormat.RGB565 );
+		else
+			pixmap = game.getGraphics().newPixmap( "checkerWhite.png" , PixmapFormat.RGB565 );	
+		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() / 2 , 0 , 32 , 32 );
     }
     
     protected void drawBottomMenu() {
@@ -276,7 +301,7 @@ public abstract class ChessBoard  {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
     		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 , 32 , 32 );
     	}
-
+    	
 
     	pixmap = game.getGraphics().newPixmap( "pictogram-din-e010-exit-32.png" , PixmapFormat.RGB565 );
 		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 , 32 , 32 );

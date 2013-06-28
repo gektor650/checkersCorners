@@ -17,10 +17,10 @@ import com.badlogic.androidgames.framework.Game;
 
 public class CheckersCornersGame extends ChessBoard {
 	
-	public CheckersCornersGame( Game game ) {
-		super(game);
+	public CheckersCornersGame( Game game , boolean newGame ) {
+		super(game , newGame );
 		if( gameMode == ONE_PLAYER )
-		AiModel = new CheckersCornersAi( AI_COLOR );
+			AiModel = new CheckersCornersAi( AI_COLOR );
 	}
 
 	
@@ -33,8 +33,8 @@ public class CheckersCornersGame extends ChessBoard {
 					&& getTurn() == figures.get( activeFigure ).getColor() ) {
 				for(int i = 0 ; i < tips.size(); i ++ )
 					if( tips.get(i).x == x && tips.get(i).y == y ) {
-						move( figures.get( activeFigure ) , new Position( x , y ) );
 						nextTurn();
+						move( figures.get( activeFigure ) , new Position( x , y ) );
 					}
 			}
 			tips = new ArrayList<Position>();

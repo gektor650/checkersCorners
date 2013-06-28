@@ -1,5 +1,7 @@
 package com.badlogic.androidgames.framework;
 
+import android.graphics.Paint.Align;
+
 public interface Graphics {
     public static enum PixmapFormat {
         ARGB8888, ARGB4444, RGB565
@@ -26,6 +28,9 @@ public interface Graphics {
     
     public void drawText(String text , int x, int y , int size , int color);
 
+    
+    public void drawText(String text , int x, int y , int size , int color , Align align );
+    
     public int getWidth();
 
     public int getHeight();

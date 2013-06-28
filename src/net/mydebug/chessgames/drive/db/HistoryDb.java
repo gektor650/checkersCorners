@@ -9,6 +9,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * @author gektor650
+ * Операции с таблицей истории ходов
+ */
+
 public class HistoryDb 
 {
 
@@ -17,50 +22,97 @@ public class HistoryDb
 	{
 		mContext = ctx;
 	}
-	private static String tag = "Provider Tester";
 
-	public void addTurn( int gameId , int turnId , byte[] data)
+	/** Добавляем в базу данных ход. 
+	 * @param gameId - айдишник игры
+	 * @param turnId - айдишник хода
+	 * @param data   - байтовое значение сериализированного масива FigureData
+	 */
+	public void addTurn( int gameId , int turnId , byte[] data , int whosTurn )
 	{
-		Log.d(tag,"Adding a book");
 		ContentValues cv = new ContentValues();
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_ID, gameId );
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_TURN_ID, turnId );
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_DATA, data );
+		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN, whosTurn );
 		
 		ContentResolver cr = this.mContext.getContentResolver();
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		cr.insert(uri, cv);
-
+		Log.d( "whos turn" , String.valueOf( whosTurn ));
 	}
+	
+	/**
+	 * Удаляем все записи из истории
+	 */
+	public void clearAll() {
+		ContentResolver cr = this.mContext.getContentResolver();
+		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
+		cr.delete(uri, null, null);		
+	}
+	
+	/**
+	 * Удаляем самую последнюю запись в таблице 
+	 */
 	public void removeLastTurn()
 	{
 		int i = getCount();
 		ContentResolver cr = this.mContext.getContentResolver();
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		Uri delUri = Uri.withAppendedPath(uri, Integer.toString(i));
-		reportString("Del Uri:" + delUri);
 		cr.delete(delUri, null, null);
-		this.reportString("Newcount:" + getCount());
 	}
 	
 	
 	
+	/** Достаем из таблицы запись состояния фигур на поле (массив из FigureData)
+	 * @param gameId 
+	 * @param turnId
+	 * @return сериализированный ArrayList<FigureData>
+	 */
 	public byte[] getTurn( int gameId , int turnId ) {
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		Activity a = (Activity)this.mContext;
 		Cursor c = a.getContentResolver().query(uri, null, "turn_id = " + turnId + " and game_id = " + gameId , null, null);
 		byte[] dataDb = null;
 		int dataId = c.getColumnIndex(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_DATA);
-		
-		for(c.moveToFirst();!c.isAfterLast();c.moveToNext())
-		{
-			dataDb = c.getBlob(dataId);
-		}
+		c.moveToFirst();
+		dataDb = c.getBlob(dataId);
 		c.close();
 		return dataDb;
 	}
 
-	private int getCount()
+	
+	/**
+	 * @param gameId
+	 * @return max turnId by gameId
+	 */
+	public int getLastTurnId( int gameId ) {
+		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
+		Activity a = (Activity)this.mContext;
+		Cursor c = a.getContentResolver().query(uri, new String[] {"MAX(turn_id) AS maxTurnId"} , "game_id = " + gameId , null, null);
+		int dataId = c.getColumnIndex("maxTurnId");
+		c.moveToFirst();
+		int  dataDb = c.getInt(dataId);
+		c.close();
+		return dataDb;
+	}
+	
+	public int getLastWhosTurn( int gameId , int turnId ) {
+		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
+		Activity a = (Activity)this.mContext;
+		Cursor c = a.getContentResolver().query(uri, new String[] {"whos_turn"} , "game_id = " + gameId + " and turn_id = " + turnId  , null, null);
+		int dataId = c.getColumnIndex("whos_turn");
+		c.moveToFirst();
+		int  dataDb = c.getInt(dataId);
+		c.close();
+		return dataDb;
+	}
+	
+	/**
+	 * @return общее количество строк в таблице
+	 */
+	public int getCount()
 	{
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		Activity a = (Activity)this.mContext;
@@ -70,9 +122,5 @@ public class HistoryDb
 		return numberOfRecords;
 	}
 
-	private void reportString(String s)
-	{
-		Log.d(tag,s);
-	}
 
 }

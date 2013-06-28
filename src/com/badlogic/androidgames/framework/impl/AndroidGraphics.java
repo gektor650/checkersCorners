@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.Matrix;
@@ -158,6 +159,17 @@ public class AndroidGraphics implements Graphics {
        paint.setColor(color);
        paint.setAntiAlias( true );
        paint.setTextAlign( Paint.Align.CENTER );
+	   canvas.drawText( text , x , y, paint );
+   }
+   
+   @Override 
+   public void drawText( String text , int x , int y , int size , int color , Align align ) {
+	   Typeface font = Typeface.createFromAsset( assets , "ubuntu-font-family/Ubuntu-L.ttf");
+	   paint.setTypeface( font );
+	   paint.setTextSize( size );
+	   paint.setColor(color);
+	   paint.setAntiAlias( true );
+	   paint.setTextAlign( align );
 	   canvas.drawText( text , x , y, paint );
    }
 

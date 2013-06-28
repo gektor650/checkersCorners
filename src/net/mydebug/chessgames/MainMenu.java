@@ -3,6 +3,8 @@ package net.mydebug.chessgames;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.mydebug.chessgames.drive.db.HistoryDb;
+
 import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
@@ -30,12 +32,18 @@ public class MainMenu extends Screen{
 	int       x = width/2;
 	int padding = 0;
 	boolean changes = true;
+    boolean onlyNewGame = true;
+	HistoryDb historyDb;
 	
 	public MainMenu ( Game game ) {
 		super(game);
-		menus.add( new ImpossibleActions("Chesses corners game" )) ;
-		menus.add( new ImpossibleActions("Classic chess"   )) ;
-		menus.add( new ImpossibleActions("Chess campaign"   )) ;
+		historyDb = new HistoryDb( game.getActivity() );
+		menus.add( new ImpossibleActions("New game" )) ;
+		if( historyDb.getCount() > 1 ) {
+			menus.add( new ImpossibleActions("Resume last game" )) ;	
+			onlyNewGame = false;
+		}
+		menus.add( new ImpossibleActions("Prefences")) ;
 		menus.add( new ImpossibleActions("Exit"   )) ;
 		padding  = ( height - 20 * menus.size() ) / menus.size() ;
 	}
@@ -45,14 +53,29 @@ public class MainMenu extends Screen{
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 		List<KeyEvent>     keyEvents = game.getInput().getKeyEvents();   
         int len = touchEvents.size();
+
+        
         for(int j = 0; j < len; j++) {
             TouchEvent event = touchEvents.get(j);
             if( event.type != TouchEvent.TOUCH_UP ) continue;
     		for(int i = 0 ; i < menus.size() ; i++ ) {
-    			if( event.y < menus.get(i).y+10 && event.y > menus.get(i).y-10 ) {
-    	            switch(i) {
-    	            	case 0 : game.setScreen( new СheckersCornersActivity( game ) );break;
-    	            	case 3 : System.exit(0);break;
+    			if( event.y < menus.get(i).y+15 && event.y > menus.get(i).y-15 ) {
+    	            if( i == 0 ) {
+    	            	game.setScreen( new СheckersCornersActivity( game , true ) );	            	
+    	            } else {
+    	            	if( onlyNewGame ) {
+    	            		switch( i ) {
+    	    	            	case 1 : break;
+    	    	            	case 2 : System.exit(0);break;
+    	            		}
+    	            	} else {
+    	            		switch( i ) {
+		    	            	case 1 : game.setScreen( new СheckersCornersActivity( game , false ) );break;
+		    	            	case 2 : break;
+		    	            	case 3 : System.exit(0);break;
+		            		}	
+    	            	}
+	
     	            }
     			}
     		}

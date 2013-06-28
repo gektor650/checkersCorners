@@ -2,6 +2,10 @@ package net.mydebug.chessgames.drive.figures;
 
 import java.io.Serializable;
 
+/**
+ * @author gektor650
+ * Класс используется для серилизации фигуры (цвет, позиция и тип), для дальнейшего хранения в базе данных
+ */
 public class FigureData implements Serializable{
 	/**
 	 * 

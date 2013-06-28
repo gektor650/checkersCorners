@@ -14,12 +14,13 @@ import com.badlogic.androidgames.framework.Input.KeyEvent;
 
 public class СheckersCornersActivity extends Screen {
 	CheckersCornersGame cornersGame ;
-	public СheckersCornersActivity( Game game ) {
+	public СheckersCornersActivity( Game game  , boolean newGame ) {
 		super( game );
 		game.getGraphics().clear(0xff964009);
-		cornersGame = new CheckersCornersGame( game );
+		cornersGame = new CheckersCornersGame( game , newGame );
 		cornersGame.draw();
 	}
+
 
 	@Override
 	public void update(float deltaTime) {

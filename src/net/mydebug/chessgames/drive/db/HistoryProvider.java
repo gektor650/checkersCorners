@@ -38,6 +38,8 @@ public class HistoryProvider extends ContentProvider{
 	    			   				HistoryTableMetaData.HISTORY_GAME_ID);
 	    	sHistoryProjectionMap.put(HistoryTableMetaData.HISTORY_TURN_ID, 
 	    			                HistoryTableMetaData.HISTORY_TURN_ID);
+	    	sHistoryProjectionMap.put(HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN, 
+	    			HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN);
 	    	sHistoryProjectionMap.put(HistoryTableMetaData.HISTORY_GAME_DATA, 
 	    			                HistoryTableMetaData.HISTORY_GAME_DATA);
 	    	
@@ -80,6 +82,7 @@ public class HistoryProvider extends ContentProvider{
 	                    + HistoryTableMetaData._ID + " INTEGER PRIMARY KEY,"
 	                    + HistoryTableMetaData.HISTORY_GAME_ID + " INTEGER,"
 	                    + HistoryTableMetaData.HISTORY_TURN_ID + " INTEGER,"
+	                    + HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN + " INTEGER,"
 	                    + HistoryTableMetaData.HISTORY_GAME_DATA + " BLOB,"
 	                    + HistoryTableMetaData.CREATED_DATE + " INTEGER"
 	                    + ");");
@@ -203,6 +206,9 @@ public class HistoryProvider extends ContentProvider{
 	        }
 	        if (values.containsKey(HistoryTableMetaData.HISTORY_GAME_DATA) == false) {
 	            values.put(HistoryTableMetaData.HISTORY_GAME_DATA, "Unknown DATA");
+	        }
+	        if (values.containsKey(HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN) == false) {
+	        	values.put(HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN, "Unknown WHOS_TOURN");
 	        }
 
 	        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
