@@ -8,6 +8,7 @@ import java.util.List;
 import net.mydebug.chessgames.drive.figures.CheckerCorners;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
+import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
 
 
@@ -37,7 +38,8 @@ public class CheckersCornersGame extends ChessBoard {
 						move( figures.get( activeFigure ) , new Position( x , y ) );
 					}
 			}
-			tips = new ArrayList<Position>();
+			tips      = new ArrayList<Position>();
+			tipsLines = new ArrayList<MoveLine>();
 			activeFigure = -1;
 		} 
 		if( index > -1 && activeFigure == -1) {
@@ -66,8 +68,8 @@ public class CheckersCornersGame extends ChessBoard {
 	@Override
 	protected void buildTips( int figureIndex , int x , int y ) {
 		if( figures.get(figureIndex).getColor() == getTurn() ) {
-			tips = figures.get(figureIndex).getAviableMoves();
-			tipsDirections = figures.get(figureIndex).getAviableDirections();
+			tips      = figures.get(figureIndex).getAviableMoves();
+			tipsLines = figures.get(figureIndex).getAviableDirectionsLines();
 		}
 	}
 	
@@ -110,7 +112,6 @@ public class CheckersCornersGame extends ChessBoard {
 		figures = new ArrayList<Figure>();
 		for( int i = 0 ; i < figureData.size() ; i++ ) {
 			figures.add( new CheckerCorners( figureData.get(i).color, figureData.get(i).x , figureData.get(i).y , this ) );	
-			Log.d( "insert" , figures.get(i).toString() );
 		}
 	
 	}

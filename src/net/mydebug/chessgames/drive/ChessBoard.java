@@ -17,6 +17,7 @@ import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
 import net.mydebug.chessgames.drive.figures.MoveDirection;
+import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
 
 public abstract class ChessBoard  {
@@ -25,7 +26,7 @@ public abstract class ChessBoard  {
 	
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
-	protected List<MoveDirection> tipsDirections = new ArrayList<MoveDirection>();
+	protected List<MoveLine> tipsLines 		 = new ArrayList<MoveLine>();
     protected Ai AiModel;
     protected History history;
 	private float[] pixelToPositionX = new float[9];
@@ -213,8 +214,8 @@ public abstract class ChessBoard  {
     public void draw() {
     	game.getGraphics().clear(0xff964009);
     	this.drawBoard();
-    	this.drawTips();
     	this.drawFigures();
+    	this.drawTips();
     	this.drawInfo();
     	this.drawBottomMenu();
 //    	this.drawGrid();
@@ -237,11 +238,17 @@ public abstract class ChessBoard  {
     }
 
 	private void drawTips() {
-		if( BOARD_SHOW_TIPS == 1 ) 
+		if( BOARD_SHOW_TIPS == 1 ) {
+			// Подсвечиваем поля возможного хода
 			for( int i = 0 ; i < tips.size() ; i++ ) {
 				highlightField( tips.get(i) , 0xcc00cc00 );	
 				highlightFieldBorder( tips.get(i) ,0xff00ff00);
 			}
+			// Рисуем линии, которые подсказывают траэкторию возможного хода
+			for( int i = 0 ; i < tipsLines.size() ; i++ ) {			
+				game.getGraphics().drawLine( (int) (getXPixel( tipsLines.get(i).position1.x) + fieldHeight / 2  ), (int) (getYPixel( tipsLines.get(i).position1.y )  + fieldHeight / 2), (int)( getXPixel( tipsLines.get(i).position2.x ) + fieldHeight / 2 ), (int) (getYPixel( tipsLines.get(i).position2.y ) + fieldHeight / 2 ), 0xff00ff00 , 2 );
+			}
+		}
 	}
     
 	private void highlightFieldBorder( Position position , int color ) {
@@ -269,7 +276,7 @@ public abstract class ChessBoard  {
     	for( int i = 0 ; i < len ; i++ ) {
     		Figure figure = figures.get(i);
     		Pixmap pixmap;
-    		if( i == activeFigure && figure.getColor() == figures.get(activeFigure).getColor() ) {
+    		if( i == activeFigure && getTurn() == figures.get(activeFigure).getColor() ) {
 				highlightField( figure.getPosition() ,0x33cccccc);
 				highlightFieldBorder( figure.getPosition() ,0xffcccccc);
 				pixmap = game.getGraphics().newPixmap( figure.getActiveImage() , PixmapFormat.RGB565 );
