@@ -71,7 +71,7 @@ public abstract class Figure  {
 
 	
 	public abstract List<Position> getAviableMoves( );
-	public abstract List<MoveDirection> getAviableDirections( );
+	public abstract List<MoveLine> getAviableDirectionsLines( );
 
 	
 

@@ -18,4 +18,5 @@ public interface Game {
     public Screen getStartScreen();
     
     public Activity getActivity();
+
 }

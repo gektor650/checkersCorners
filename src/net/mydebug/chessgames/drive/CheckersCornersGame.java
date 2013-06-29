@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mydebug.chessgames.drive.figures.CheckerCorners;
+import net.mydebug.chessgames.drive.figures.CheckersCornersAi;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
+import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
 
 
@@ -20,7 +22,7 @@ public class CheckersCornersGame extends ChessBoard {
 	public CheckersCornersGame( Game game , boolean newGame ) {
 		super(game , newGame );
 		if( gameMode == ONE_PLAYER )
-			AiModel = new CheckersCornersAi( AI_COLOR );
+			AiModel = new CheckersCornersAi( AI_COLOR , (ChessBoard) this );
 	}
 
 	
@@ -33,11 +35,11 @@ public class CheckersCornersGame extends ChessBoard {
 					&& getTurn() == figures.get( activeFigure ).getColor() ) {
 				for(int i = 0 ; i < tips.size(); i ++ )
 					if( tips.get(i).x == x && tips.get(i).y == y ) {
-						nextTurn();
-						move( figures.get( activeFigure ) , new Position( x , y ) );
+						move( activeFigure  , new Position( x , y ) );
 					}
 			}
-			tips = new ArrayList<Position>();
+			tips      = new ArrayList<Position>();
+			tipsLines = new ArrayList<MoveLine>();
 			activeFigure = -1;
 		} 
 		if( index > -1 && activeFigure == -1) {
@@ -66,19 +68,11 @@ public class CheckersCornersGame extends ChessBoard {
 	@Override
 	protected void buildTips( int figureIndex , int x , int y ) {
 		if( figures.get(figureIndex).getColor() == getTurn() ) {
-			tips = figures.get(figureIndex).getAviableMoves();
-			tipsDirections = figures.get(figureIndex).getAviableDirections();
+			tips      = figures.get(figureIndex).getAviableMoves();
+			tipsLines = figures.get(figureIndex).getAviableDirectionsLines();
 		}
 	}
 	
-	@Override
-	protected void aiTurn( int color ) {
-		List<Position> moves;
-		for( int i = 0 ; i < figures.size() ; i++ ) {
-			//AiModel->getTurn( figures.get(i) , moves );	
-		}
-	}
-
 	@Override
 	protected int isGameOver() {
 		int i;
@@ -110,7 +104,6 @@ public class CheckersCornersGame extends ChessBoard {
 		figures = new ArrayList<Figure>();
 		for( int i = 0 ; i < figureData.size() ; i++ ) {
 			figures.add( new CheckerCorners( figureData.get(i).color, figureData.get(i).x , figureData.get(i).y , this ) );	
-			Log.d( "insert" , figures.get(i).toString() );
 		}
 	
 	}

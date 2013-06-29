@@ -1,13 +1,17 @@
 package com.badlogic.androidgames.framework.impl;
 
+import net.mydebug.chessgames.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -58,7 +62,7 @@ public abstract class AndroidGame extends Activity implements Game {
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GLGame");
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
@@ -110,7 +114,8 @@ public abstract class AndroidGame extends Activity implements Game {
         this.screen = screen;
     }
     
-    public Screen getCurrentScreen() {
+
+	public Screen getCurrentScreen() {
         return screen;
     }
     

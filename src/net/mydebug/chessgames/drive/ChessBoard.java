@@ -17,6 +17,7 @@ import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
 import net.mydebug.chessgames.drive.figures.MoveDirection;
+import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
 
 public abstract class ChessBoard  {
@@ -25,7 +26,7 @@ public abstract class ChessBoard  {
 	
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
-	protected List<MoveDirection> tipsDirections = new ArrayList<MoveDirection>();
+	protected List<MoveLine> tipsLines 		 = new ArrayList<MoveLine>();
     protected Ai AiModel;
     protected History history;
 	private float[] pixelToPositionX = new float[9];
@@ -40,6 +41,9 @@ public abstract class ChessBoard  {
 	protected final int PLAYER_COLOR = Figure.WHITE;
 	protected final int AI_COLOR     = Figure.BLACK;
 	protected final int TWO_PLAYERS = 1;
+	
+	public Position aiTurnFrom = null;
+	public Position aiTurnTo   = null;
 	
 	private int boardWidth;
 	private int boardHeight;
@@ -62,7 +66,7 @@ public abstract class ChessBoard  {
     	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
         this.game = game;
 
-
+        activeFigure = -1;
       	boardWidth = game.getGraphics().getWidth();
     	paddingY   = ( game.getGraphics().getHeight() - boardWidth ) / 2; 
         
@@ -82,11 +86,14 @@ public abstract class ChessBoard  {
         figurePaddin = fieldWidth * 0.1f;
     	history = new History( game , isNew );
         if( isNew ) {
-            this.setFiguresOnBoard();
             this.initializeFigures();
+            this.setFiguresOnBoard();
     		history.save(this);
         } else {
         	this.loadGameFromHistory();
+			if( isGameOver() != -1 ) {
+				gameOver();
+			}
         }
 
     }
@@ -118,17 +125,9 @@ public abstract class ChessBoard  {
         	if( fieldX < CHESSBOARD_FIELDS_COUNT && fieldY < CHESSBOARD_FIELDS_COUNT ) {
     			press( fieldX , fieldY );
     			setFiguresOnBoard();
-    			if( isGameOver() == -1 ) {
-    	    		draw();	
-    			} else {
-    	    		String text = "";
-    	    		if( isGameOver() == Figure.WHITE ) {
-    	    			text = " White wins!";
-    	    		} else if( isGameOver() == Figure.BLACK ){
-    	    			text = " Black wins!";
-    	    		}
-    	    		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight(), 0x33cccccc);
-    				game.getGraphics().drawText( "Game over! " + text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 , 15, 0xffff0000);
+    			draw();
+    			if( isGameOver() != -1 ) {
+    				gameOver();
     			}
     			
         	}
@@ -137,7 +136,6 @@ public abstract class ChessBoard  {
     		// Если нажали в левый нижний угол (иконка "ход назад")
     		if( x < 32 ) {
     			this.loadPrevFromHistory();
-        		draw();	
     		// Если нажали в нижний правый угол (иконка выйти в меню)
     		} else if( x > game.getGraphics().getWidth() - 32) {
 				game.setScreen( new MainMenu( game ) );
@@ -148,18 +146,42 @@ public abstract class ChessBoard  {
 
     }
     
+    public void gameOver() {
+		String text = "";
+		if( isGameOver() == Figure.WHITE ) {
+			text = "White wins!";
+		} else if( isGameOver() == Figure.BLACK ){
+			text = "Black wins!";
+		}
+		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getHeight() - 32 , game.getGraphics().getWidth(), 0x77cccccc);
+		game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
+		game.getGraphics().drawText( text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 + 10 , 20, 0xffff0000);
+    }
+    
+    
     public void loadPrevFromHistory() {
 		ArrayList<FigureData> figureDatas = history.back( );
 		if( figureDatas != null ) {
+			clearTips();
     		setFiguresByFiguresData( figureDatas );
+    		setFiguresOnBoard();
     		this.WHOSE_TURN = history.lastWhosTurn();
-		}	
+		}
+		draw();	
     }
 
+    public void clearTips() {
+    	tipsLines  = new ArrayList<MoveLine>();
+    	tips       = new ArrayList<Position>();
+    	aiTurnFrom = null;
+    	aiTurnTo   = null;
+    }
+    
 	public void loadGameFromHistory() {
 		ArrayList<FigureData> figureDatas = history.loadLastTurn( );
 		if( figureDatas != null ) {
 			setFiguresByFiguresData( figureDatas );
+			setFiguresOnBoard();
     		this.WHOSE_TURN = history.lastWhosTurn();
 		}	
 	}
@@ -174,11 +196,6 @@ public abstract class ChessBoard  {
     	} else {
     		WHOSE_TURN = Figure.WHITE;
     	}
-    	if( this.gameMode == this.ONE_PLAYER ) {
-    		if( WHOSE_TURN != PLAYER_COLOR ) {
-    			this.aiTurn( WHOSE_TURN );
-    		}
-    	}
     }
     
     protected int getFigureIndexByField( int x , int y ) {
@@ -189,9 +206,22 @@ public abstract class ChessBoard  {
     	return figuresOnBoard;
     }
     
-    protected void move( Figure figure , Position position) {
-		figures.get( activeFigure ).setPosition( position.x, position.y);
-		history.save( this );
+    public void move( int figureIndex , Position position) {
+		figures.get( figureIndex ).setPosition( position.x, position.y);
+		setFiguresOnBoard();
+		tips      = new ArrayList<Position>();
+		tipsLines = new ArrayList<MoveLine>();
+		activeFigure = -1;
+		nextTurn();
+		if( this.gameMode == this.ONE_PLAYER ) {
+    		if( WHOSE_TURN != PLAYER_COLOR ) {
+    			AiModel.move();
+    		} else {
+	    		history.save( this );    		
+    		}
+		} else {
+    		history.save( this );    		
+    	}
     }
 
     public void setFigures( List<Figure> figures ) {
@@ -209,14 +239,21 @@ public abstract class ChessBoard  {
     		figuresOnBoard[figures.get(i).getX()][figures.get(i).getY()] = i;
     	}
     }
+    
+    public void setAiTurnShowField( Position p1 , Position p2 ) {
+    	aiTurnFrom = p1;
+    	aiTurnTo   = p2;
+    }
 
     public void draw() {
     	game.getGraphics().clear(0xff964009);
     	this.drawBoard();
-    	this.drawTips();
+    	this.drawAiTurns();
     	this.drawFigures();
+    	this.drawTips();
     	this.drawInfo();
     	this.drawBottomMenu();
+
 //    	this.drawGrid();
     }
     
@@ -236,12 +273,20 @@ public abstract class ChessBoard  {
     	}
     }
 
-	private void drawTips() {
-		if( BOARD_SHOW_TIPS == 1 ) 
+	public void drawTips() {
+		if( BOARD_SHOW_TIPS == 1 ) {
+			// Подсвечиваем поля возможного хода 
 			for( int i = 0 ; i < tips.size() ; i++ ) {
 				highlightField( tips.get(i) , 0xcc00cc00 );	
 				highlightFieldBorder( tips.get(i) ,0xff00ff00);
 			}
+			// Рисуем линии, которые подсказывают траэкторию возможного хода
+			for( int i = 0 ; i < tipsLines.size() ; i++ ) {		
+//				System.out.print( String.valueOf( tipsLines.get(i).position1.x ) + ";" + String.valueOf( tipsLines.get(i).position1.y ) + " - " + String.valueOf( tipsLines.get(i).position2.x ) + ";" + String.valueOf( tipsLines.get(i).position2.y ) + "   ");
+				game.getGraphics().drawLine( (int) (getXPixel( tipsLines.get(i).position1.x) + fieldHeight / 2  ), (int) (getYPixel( tipsLines.get(i).position1.y )  + fieldHeight / 2), (int)( getXPixel( tipsLines.get(i).position2.x ) + fieldHeight / 2 ), (int) (getYPixel( tipsLines.get(i).position2.y ) + fieldHeight / 2 ), 0xff00ff00 , 2 );
+			}
+//			System.out.println();
+		}
 	}
     
 	private void highlightFieldBorder( Position position , int color ) {
@@ -269,7 +314,7 @@ public abstract class ChessBoard  {
     	for( int i = 0 ; i < len ; i++ ) {
     		Figure figure = figures.get(i);
     		Pixmap pixmap;
-    		if( i == activeFigure && figure.getColor() == figures.get(activeFigure).getColor() ) {
+    		if( i == activeFigure && getTurn() == figures.get(activeFigure).getColor() ) {
 				highlightField( figure.getPosition() ,0x33cccccc);
 				highlightFieldBorder( figure.getPosition() ,0xffcccccc);
 				pixmap = game.getGraphics().newPixmap( figure.getActiveImage() , PixmapFormat.RGB565 );
@@ -280,7 +325,20 @@ public abstract class ChessBoard  {
     	}
     }
     
-    protected static int getBoardLength() {
+    private void drawAiTurns() {
+    	if( aiTurnFrom != null ) {
+    		highlightField( aiTurnFrom ,0x11cccccc);
+    		highlightFieldBorder( aiTurnFrom ,0xffcccccc);    		
+    	}
+
+		if( aiTurnTo != null ) {
+			highlightField( aiTurnTo ,0x33ee0000);
+			highlightFieldBorder( aiTurnTo ,0xffff0000);    		
+		}
+
+    }
+    
+    public int getBoardLength() {
     	return CHESSBOARD_FIELDS_COUNT;
     }
     
@@ -319,14 +377,23 @@ public abstract class ChessBoard  {
 			return 1;
 		return 0;
 	}
+
+	public void setTips(List<Position> aviableMoves) {
+		this.tips = aviableMoves;
+	} 
+
+	public void setTipsLines(List<MoveLine> aviableDirectionsLines) {
+		this.tipsLines = aviableDirectionsLines;
+	}
 	
     protected abstract void initializeFigures();
     protected abstract void buildTips( int figureIndex , int x , int y );
     protected abstract void press( int x , int y );
-    protected abstract void aiTurn( int color );
     protected abstract void setFiguresByFiguresData( ArrayList<FigureData> figureData );
     // return color fins figures or -1 when game not over
-    protected abstract int isGameOver(); 
+    protected abstract int isGameOver();
+
+
     
 
 

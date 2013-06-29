@@ -45,6 +45,7 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
             canvas.drawBitmap(framebuffer, null, dstRect, null);                           
             holder.unlockCanvasAndPost(canvas);
         }
+
     }
 
     public void pause() {                        

@@ -1,8 +1,10 @@
 package net.mydebug.chessgames.drive.figures;
 
 public interface Ai {
+	public void move();
 	
-	public int checkPosition( Figure figure , Position position );
-	
-
+	class FigureAndPosition {
+		public Position position;
+		public int figureIndex;
+	}
 }

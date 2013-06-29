@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.mydebug.chessgames.drive.db.HistoryDb;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
@@ -12,6 +13,7 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Input.KeyEvent;
+import com.badlogic.androidgames.framework.impl.AndroidGame;
 
 
 public class MainMenu extends Screen{
