@@ -248,7 +248,6 @@ public abstract class ChessBoard  {
     public void draw() {
     	game.getGraphics().clear(0xff964009);
     	this.drawBoard();
-    	this.drawAiTurns();
     	this.drawFigures();
     	this.drawTips();
     	this.drawInfo();
@@ -273,9 +272,11 @@ public abstract class ChessBoard  {
     	}
     }
 
-	public void drawTips() {
+
+	private void drawTips() {
 		if( BOARD_SHOW_TIPS == 1 ) {
-			// Подсвечиваем поля возможного хода 
+			// Подсвечиваем поля возможного хода
+
 			for( int i = 0 ; i < tips.size() ; i++ ) {
 				highlightField( tips.get(i) , 0xcc00cc00 );	
 				highlightFieldBorder( tips.get(i) ,0xff00ff00);
@@ -286,6 +287,7 @@ public abstract class ChessBoard  {
 				game.getGraphics().drawLine( (int) (getXPixel( tipsLines.get(i).position1.x) + fieldHeight / 2  ), (int) (getYPixel( tipsLines.get(i).position1.y )  + fieldHeight / 2), (int)( getXPixel( tipsLines.get(i).position2.x ) + fieldHeight / 2 ), (int) (getYPixel( tipsLines.get(i).position2.y ) + fieldHeight / 2 ), 0xff00ff00 , 2 );
 			}
 //			System.out.println();
+
 		}
 	}
     

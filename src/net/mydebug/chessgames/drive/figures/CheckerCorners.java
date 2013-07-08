@@ -17,6 +17,7 @@ public class CheckerCorners extends Checker {
 	MoveLine tmpMoveLineFullField;
 	ArrayList<Position> alreadyChecked    = new ArrayList<Position>();
 
+
 	public CheckerCorners(int color , int x , int y , ChessBoard board ) {
 		super(color , x , y , board );
 	}
@@ -111,6 +112,7 @@ public class CheckerCorners extends Checker {
 		posibleDirections = new ArrayList<MoveDirection>();
 		posibleMovesLines = new ArrayList<MoveLine>();
 		alreadyChecked    = new ArrayList<Position>();
+
 		generateTurnsByPosition( getPosition() );
 		alreadyChecked.add( new Position( this.x, this.y ) );
 		for( int i = 0 ; i < turns.size() ; i++ ) {
