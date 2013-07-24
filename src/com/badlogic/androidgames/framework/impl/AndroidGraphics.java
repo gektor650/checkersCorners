@@ -27,7 +27,6 @@ public class AndroidGraphics implements Graphics {
     Paint paint;
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
-    Matrix matrix = new Matrix();
 
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
@@ -161,23 +160,29 @@ public class AndroidGraphics implements Graphics {
     
    @Override 
    public void drawText( String text , int x , int y , int size , int color ) {
-	   Typeface font = Typeface.createFromAsset( assets , "ubuntu-font-family/Ubuntu-L.ttf");
+	   Typeface font = Typeface.createFromAsset( assets , "ubuntu-font-family/Ubuntu-BI.ttf");
+       Paint paint = new Paint();
 	   paint.setTypeface( font );
+//	   paint.setTypeface( Typeface.MONOSPACE );
 	   paint.setTextSize( size );
        paint.setColor(color);
        paint.setAntiAlias( true );
        paint.setTextAlign( Paint.Align.CENTER );
-	   canvas.drawText( text , x , y, paint );
+       paint.setShadowLayer(5.0f, 0, 0, 0xffffffff );
+       canvas.drawText( text , x , y, paint );
    }
    
    @Override 
    public void drawText( String text , int x , int y , int size , int color , Align align ) {
-	   Typeface font = Typeface.createFromAsset( assets , "ubuntu-font-family/Ubuntu-L.ttf");
-	   paint.setTypeface( font );
-	   paint.setTextSize( size );
+	   Typeface font = Typeface.createFromAsset( assets , "ubuntu-font-family/Ubuntu-BI.ttf");
+       Paint paint = new Paint();
+       paint.setTypeface( font );
+//       paint.setTypeface( Typeface.MONOSPACE );
+       paint.setTextSize( size );
 	   paint.setColor(color);
 	   paint.setAntiAlias( true );
 	   paint.setTextAlign( align );
+       paint.setShadowLayer(5.0f, 0, 0, 0xffffffff );
 	   canvas.drawText( text , x , y, paint );
    }
 

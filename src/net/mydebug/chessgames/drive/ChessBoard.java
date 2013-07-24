@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
+import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
@@ -246,11 +247,15 @@ public abstract class ChessBoard  {
     }
 
     public void draw() {
-    	game.getGraphics().clear(0xff964009);
+//        game.getGraphics().clear(0xff000000);
+//        Pixmap chessBoardImage = game.getGraphics().newPixmap("13410109-vector-realistic-wood-texture-background-grey-color.jpg", Graphics.PixmapFormat.ARGB8888 );
+        Pixmap chessBoardImage = game.getGraphics().newPixmap("950890_72529114.jpg", Graphics.PixmapFormat.ARGB8888 );
+        game.getGraphics().drawPixmap(chessBoardImage, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight());
     	this.drawBoard();
     	this.drawFigures();
     	this.drawTips();
-    	this.drawInfo();
+        this.drawAiTurns();
+        this.drawInfo();
     	this.drawBottomMenu();
 
 //    	this.drawGrid();
@@ -319,9 +324,9 @@ public abstract class ChessBoard  {
     		if( i == activeFigure && getTurn() == figures.get(activeFigure).getColor() ) {
 				highlightField( figure.getPosition() ,0x33cccccc);
 				highlightFieldBorder( figure.getPosition() ,0xffcccccc);
-				pixmap = game.getGraphics().newPixmap( figure.getActiveImage() , PixmapFormat.RGB565 );
+				pixmap = game.getGraphics().newPixmap( figure.getActiveImage() , PixmapFormat.ARGB8888 );
     		} else {
-        		pixmap = game.getGraphics().newPixmap( figure.getImage() , PixmapFormat.RGB565 );
+        		pixmap = game.getGraphics().newPixmap( figure.getImage() , PixmapFormat.ARGB8888 );
     		}
     		game.getGraphics().drawPixmap( pixmap  , getXPixel(figure.getX()) + figurePaddin , getYPixel(figure.getY()) + figurePaddin , figureWidth , figureHeight );
     	}
@@ -345,8 +350,8 @@ public abstract class ChessBoard  {
     }
     
     protected void drawInfo() {
-		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurn() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xffffffff , Paint.Align.LEFT );
-		game.getGraphics().drawText( "Move "  ,  game.getGraphics().getWidth() / 2 , 20 , 20 , 0xffffffff , Paint.Align.RIGHT );		
+		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurn() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
+		game.getGraphics().drawText( "Move "  ,  game.getGraphics().getWidth() / 2 , 20 , 20 , 0xff000000 , Paint.Align.RIGHT );
 		Pixmap pixmap;
 		if( WHOSE_TURN == 0 ) 
 			pixmap = game.getGraphics().newPixmap( "checkerBlack.png" , PixmapFormat.RGB565 );
@@ -359,12 +364,12 @@ public abstract class ChessBoard  {
     	Pixmap pixmap;
     	if( history.getTurn() > 1) {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
-    		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 , 32 , 32 );
+    		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 );
     	}
     	
 
-    	pixmap = game.getGraphics().newPixmap( "pictogram-din-e010-exit-32.png" , PixmapFormat.RGB565 );
-		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 , 32 , 32 );
+    	pixmap = game.getGraphics().newPixmap( "Close-2-icon-32.png" , PixmapFormat.RGB565 );
+		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 );
 		
     }
     

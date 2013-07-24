@@ -3,6 +3,7 @@ package net.mydebug.chessgames;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.androidgames.framework.Pixmap;
 import net.mydebug.chessgames.drive.db.HistoryDb;
 
 import android.app.Activity;
@@ -46,8 +47,9 @@ public class MainMenu extends Screen{
 			onlyNewGame = false;
 		}
 		menus.add( new ImpossibleActions("Prefences")) ;
-		menus.add( new ImpossibleActions("Exit"   )) ;
-		padding  = ( height - 20 * menus.size() ) / menus.size() ;
+		menus.add( new ImpossibleActions(   "Exit"   )) ;
+        int paddingUp = (int)( height * 0.2 ) ;
+        padding  = ( height - paddingUp )  / menus.size() ;
 	}
 	
 	@Override
@@ -91,10 +93,13 @@ public class MainMenu extends Screen{
 	}
 	public void drawMenu() {
 		g.clear(0xff964009);
+        Pixmap chessBoardImage = game.getGraphics().newPixmap("old_wood_and_paper_vector_1.jpg", Graphics.PixmapFormat.ARGB8888 );
+
+        game.getGraphics().drawPixmap(chessBoardImage, 0, 0, g.getWidth(), g.getHeight() );
 		for(int i = 0 ; i < menus.size() ; i++ ) {
 			menus.get(i).y = padding * ( i + 1 ) ;
 			menus.get(i).x = x;
-			g.drawText( menus.get(i).text , menus.get(i).x , menus.get(i).y , 20 , 0xffffffff);	
+			g.drawText( menus.get(i).text , menus.get(i).x , menus.get(i).y , 20 , 0xff000000);
 		}
 		this.changes = false;
 	}
