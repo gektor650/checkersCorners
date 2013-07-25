@@ -286,6 +286,7 @@ public abstract class ChessBoard  {
 				highlightField( tips.get(i) , 0xcc00cc00 );	
 				highlightFieldBorder( tips.get(i) ,0xff00ff00);
 			}
+            Graph graph = new Graph( tipsLines );
 			// Рисуем линии, которые подсказывают траэкторию возможного хода
 			for( int i = 0 ; i < tipsLines.size() ; i++ ) {		
 //				System.out.print( String.valueOf( tipsLines.get(i).position1.x ) + ";" + String.valueOf( tipsLines.get(i).position1.y ) + " - " + String.valueOf( tipsLines.get(i).position2.x ) + ";" + String.valueOf( tipsLines.get(i).position2.y ) + "   ");

@@ -9,5 +9,13 @@ public class MoveLine {
 		position1 = new Position(x1,y1);
 		position2 = new Position(x2,y2);
 	}
+
+    public Position getPosition1() {
+        return position1;
+    }
+
+    public Position getPosition2() {
+        return position2;
+    }
 	
 }
