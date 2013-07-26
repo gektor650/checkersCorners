@@ -9,9 +9,9 @@ public abstract  class Checker extends Figure {
 	public Checker(int color , int x , int y , ChessBoard board ) {
 		super(color , x , y , board );
 		if( color == Figure.WHITE ) 
-			image = "checkerWhite.png";
+			image = "checkerWhite1.png";
 		else 			
-			image = "checkerBlack.png";
+			image = "checkerBlack1.png";
 		imageActive = "checkerActive.png";
 	}
 

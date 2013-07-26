@@ -59,6 +59,7 @@ public class CheckerCorners extends Checker {
 			posibleDirections.add( direction );		
 			if( tmpMoveLineFullField != null ) 
 				posibleMovesLines.add( tmpMoveLineFullField );
+            tmpMoveLineFullField = null;
 			posibleMovesLines.add( new MoveLine( tmpX , tmpY , position.x , position.y ) );
 			List<Position> directPos = new ArrayList<Position>();
 			List<MoveDirection> directions = new ArrayList<MoveDirection>();
@@ -131,11 +132,11 @@ public class CheckerCorners extends Checker {
 				if( turns.get(i).x == this.x ) {
 					value = -(this.y - turns.get(i).y); 
 					direction = DIRECTION_Y;
-					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x, turns.get(i).y  + value );
+					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x , turns.get(i).y );
 				} else {
 					value = -(this.x - turns.get(i).x) ;
 					direction = DIRECTION_X;
-					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x + value , turns.get(i).y  );
+					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x , turns.get(i).y  );
 				}
 				// рекурсивно проверяем можем ли мы перешагнуть через занятую клетку
 				checkTurnNextLevel(  turns.get(i) , new MoveDirection(direction, value) );

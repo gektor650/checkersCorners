@@ -47,6 +47,7 @@ public class MainMenu extends Screen{
 			onlyNewGame = false;
 		}
 		menus.add( new ImpossibleActions("Prefences")) ;
+		menus.add( new ImpossibleActions("Statistics")) ;
 		menus.add( new ImpossibleActions(   "Exit"   )) ;
         int paddingUp = (int)( height * 0.2 ) ;
         padding  = ( height - paddingUp )  / menus.size() ;
@@ -70,14 +71,16 @@ public class MainMenu extends Screen{
     	            	if( onlyNewGame ) {
     	            		switch( i ) {
     	    	            	case 1 : break;
-    	    	            	case 2 : System.exit(0);break;
+    	    	            	case 2 : break;
+    	    	            	case 3 : System.exit(0);break;
     	            		}
     	            	} else {
     	            		switch( i ) {
 		    	            	case 1 : game.setScreen( new СheckersCornersActivity( game , false ) );break;
 		    	            	case 2 : break;
-		    	            	case 3 : System.exit(0);break;
-		            		}	
+		    	            	case 3 : break;
+		    	            	case 4 : System.exit(0);break;
+		            		}
     	            	}
 	
     	            }
