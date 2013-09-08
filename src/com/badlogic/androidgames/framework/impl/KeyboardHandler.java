@@ -39,7 +39,6 @@ public class KeyboardHandler implements OnKeyListener {
             KeyEvent keyEvent = keyEventPool.newObject();
             keyEvent.keyCode = keyCode;
             keyEvent.keyChar = (char) event.getUnicodeChar();
-            Log.d( "111" , String.valueOf( event.getAction() ) );
             if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
                 keyEvent.type = KeyEvent.KEY_DOWN;
                 if(keyCode > 0 && keyCode < 127)

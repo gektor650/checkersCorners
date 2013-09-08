@@ -3,8 +3,6 @@ package net.mydebug.chessgames.drive;
 
 
 import java.util.ArrayList;
-import java.util.List;
-
 import net.mydebug.chessgames.drive.figures.CheckerCorners;
 import net.mydebug.chessgames.drive.figures.CheckersCornersAi;
 import net.mydebug.chessgames.drive.figures.Figure;
@@ -13,12 +11,12 @@ import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
 
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Game;
 
 public class CheckersCornersGame extends ChessBoard {
-	
+
+    protected int time;
+
 	public CheckersCornersGame( Game game , boolean newGame ) {
 		super(game , newGame );
 		if( gameMode == ONE_PLAYER )

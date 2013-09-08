@@ -7,9 +7,8 @@ public class HistoryProviderMetaData {
 	  public static final String AUTHORITY = "net.mydebug.chessgames.drive.db.HistoryProvider";
 	    
 	    public static final String DATABASE_NAME = "history.db";
-	    public static final int DATABASE_VERSION = 4;
-	    public static final String BOOKS_TABLE_NAME = "history";
-	    
+	    public static final int DATABASE_VERSION = 5;
+
 	    private HistoryProviderMetaData() {}
 	    //inner class describing columns and their types
 	    public static final class HistoryTableMetaData implements BaseColumns 
@@ -31,7 +30,9 @@ public class HistoryProviderMetaData {
 	        public static final String HISTORY_TURN_ID   = "turn_id";
 	        //string type
 	        public static final String HISTORY_GAME_DATA = "data";
-	        
+
+	        public static final String HISTORY_GAME_TIME = "time";
+
 	        public static final String HISTORY_GAME_WHOS_TOURN = "whos_turn";
 	        //Integer from System.currentTimeMillis()
 	        public static final String CREATED_DATE      = "created";

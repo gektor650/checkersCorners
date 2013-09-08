@@ -116,7 +116,7 @@ public class AndroidGraphics implements Graphics {
         paint.setStyle(Style.FILL_AND_STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeWidth(2);
-        canvas.drawRect(x, y, x + width - 1, y + width - 1, paint);
+        canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
     }
 
     @Override

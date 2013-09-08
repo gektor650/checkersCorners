@@ -43,7 +43,7 @@ public class History implements HistoryInterface {
 
 		byte[] savedData = Serialize.serialize( data );
 
-		historyDb.addTurn( gameId, ++turnId, savedData , board.getTurn() ); 
+		historyDb.addTurn( gameId, ++turnId, savedData , board.getTurn() , board.getGameTime() );
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -70,6 +70,15 @@ public class History implements HistoryInterface {
 		int whosTurn = 0;
 		whosTurn = historyDb.getLastWhosTurn( gameId , turnId );
 		return whosTurn;
+	}
+
+
+	@Override
+	public int lastGameTime( ) {
+		int gameTime = 0;
+        gameTime = historyDb.getLastGameTime(gameId, turnId);
+        System.out.println(gameTime);
+        return gameTime;
 	}
 
 

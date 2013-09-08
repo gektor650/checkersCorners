@@ -28,18 +28,18 @@ public class HistoryDb
 	 * @param turnId - айдишник хода
 	 * @param data   - байтовое значение сериализированного масива FigureData
 	 */
-	public void addTurn( int gameId , int turnId , byte[] data , int whosTurn )
+	public void addTurn( int gameId , int turnId , byte[] data , int whosTurn , int gameTime )
 	{
 		ContentValues cv = new ContentValues();
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_ID, gameId );
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_TURN_ID, turnId );
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_DATA, data );
 		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN, whosTurn );
-		
+		cv.put(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_TIME, gameTime );
+
 		ContentResolver cr = this.mContext.getContentResolver();
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		cr.insert(uri, cv);
-		Log.d( "whos turn" , String.valueOf( whosTurn ));
 	}
 	
 	/**
@@ -101,14 +101,25 @@ public class HistoryDb
 	public int getLastWhosTurn( int gameId , int turnId ) {
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		Activity a = (Activity)this.mContext;
-		Cursor c = a.getContentResolver().query(uri, new String[] {"whos_turn"} , "game_id = " + gameId + " and turn_id = " + turnId  , null, null);
-		int dataId = c.getColumnIndex("whos_turn");
+		Cursor c = a.getContentResolver().query(uri, new String[] {HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN} , "game_id = " + gameId + " and turn_id = " + turnId  , null, null);
+		int dataId = c.getColumnIndex(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN);
 		c.moveToFirst();
 		int  dataDb = c.getInt(dataId);
 		c.close();
 		return dataDb;
 	}
-	
+
+	public int getLastGameTime( int gameId , int turnId ) {
+		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
+		Activity a = (Activity)this.mContext;
+		Cursor c = a.getContentResolver().query(uri, new String[] { HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_TIME} , "game_id = " + gameId + " and turn_id = " + turnId  , null, null);
+		int gameTime = c.getColumnIndex(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_TIME );
+		c.moveToFirst();
+        gameTime = c.getInt(gameTime);
+		c.close();
+		return gameTime;
+	}
+
 	/**
 	 * @return общее количество строк в таблице
 	 */

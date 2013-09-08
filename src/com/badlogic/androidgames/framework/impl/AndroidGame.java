@@ -58,7 +58,7 @@ public abstract class AndroidGame extends Activity implements Game {
         screen = getStartScreen();
 
         setContentView(renderView);
-        
+
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GLGame");
     }

@@ -42,6 +42,8 @@ public class HistoryProvider extends ContentProvider{
 	    			HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN);
 	    	sHistoryProjectionMap.put(HistoryTableMetaData.HISTORY_GAME_DATA, 
 	    			                HistoryTableMetaData.HISTORY_GAME_DATA);
+	    	sHistoryProjectionMap.put(HistoryTableMetaData.HISTORY_GAME_TIME,
+	    			                HistoryTableMetaData.HISTORY_GAME_TIME);
 	    	
 	    	//created date
 	    	sHistoryProjectionMap.put(HistoryTableMetaData.CREATED_DATE, 
@@ -77,12 +79,12 @@ public class HistoryProvider extends ContentProvider{
 	        @Override
 	        public void onCreate(SQLiteDatabase db) 
 	        {
-	        	Log.d(TAG,"inner oncreate called");
 	            db.execSQL("CREATE TABLE " + HistoryTableMetaData.TABLE_NAME + " ("
 	                    + HistoryTableMetaData._ID + " INTEGER PRIMARY KEY,"
 	                    + HistoryTableMetaData.HISTORY_GAME_ID + " INTEGER,"
 	                    + HistoryTableMetaData.HISTORY_TURN_ID + " INTEGER,"
 	                    + HistoryTableMetaData.HISTORY_GAME_WHOS_TOURN + " INTEGER,"
+	                    + HistoryTableMetaData.HISTORY_GAME_TIME + " INTEGER,"
 	                    + HistoryTableMetaData.HISTORY_GAME_DATA + " BLOB,"
 	                    + HistoryTableMetaData.CREATED_DATE + " INTEGER"
 	                    + ");");
@@ -91,10 +93,6 @@ public class HistoryProvider extends ContentProvider{
 	        @Override
 	        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
 	        {
-	        	Log.d(TAG,"inner onupgrade called");
-	            Log.w(TAG, "Upgrading database from version " 
-	            		+ oldVersion + " to "
-	                    + newVersion + ", which will destroy all old data");
 	            db.execSQL("DROP TABLE IF EXISTS " + 
 	            		 HistoryTableMetaData.TABLE_NAME);
 	            onCreate(db);
@@ -106,7 +104,6 @@ public class HistoryProvider extends ContentProvider{
 	    @Override
 	    public boolean onCreate() 
 	    {
-	    	Log.d(TAG,"main onCreate called");
 	        mOpenHelper = new DatabaseHelper(getContext());
 	        return true;
 	    }

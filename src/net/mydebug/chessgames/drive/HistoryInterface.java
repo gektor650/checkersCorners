@@ -12,4 +12,5 @@ public interface HistoryInterface {
 	public ArrayList<FigureData> back();
 	public ArrayList<FigureData> loadLastTurn();
 	public int lastWhosTurn();
+	public int lastGameTime();
 }
