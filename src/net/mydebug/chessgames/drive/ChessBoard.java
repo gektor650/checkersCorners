@@ -24,7 +24,7 @@ import net.mydebug.chessgames.drive.figures.Position;
 public abstract class ChessBoard  {
 	private Pixmap chessBoardImage;
 	protected Game game;
-	
+	protected Timer timer;
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
 	protected List<MoveLine> tipsLines 		 = new ArrayList<MoveLine>();
@@ -98,14 +98,13 @@ public abstract class ChessBoard  {
 				gameOver();
 			}
         }
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 gameTime += 1;
-                drawGameTime();
             }
-        }, 1000, 1000);
+        }, 0, 1000);
 
     }
 	
@@ -149,7 +148,8 @@ public abstract class ChessBoard  {
     			this.loadPrevFromHistory();
     		// Если нажали в нижний правый угол (иконка выйти в меню)
     		} else if( x > game.getGraphics().getWidth() - 32) {
-				game.setScreen( new MainMenu( game ) );
+                this.clearTimer();
+                game.setScreen( new MainMenu( game ) );
     		}
     	}
  
@@ -159,9 +159,10 @@ public abstract class ChessBoard  {
     
     public void gameOver() {
 		String text = "";
-		if( isGameOver() == Figure.WHITE ) {
+        int winner = isGameOver();
+		if( winner == Figure.WHITE ) {
 			text = "White wins!";
-		} else if( isGameOver() == Figure.BLACK ){
+		} else if( winner == Figure.BLACK ){
 			text = "Black wins!";
 		}
 		game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getHeight() - 32 , game.getGraphics().getWidth(), 0x77cccccc);
@@ -267,8 +268,8 @@ public abstract class ChessBoard  {
     	this.drawFigures();
     	this.drawTips();
         this.drawAiTurns();
-        this.drawInfo();
     	this.drawBottomMenu();
+        this.drawInfo();
         this.drawGameTime();
 
 //    	this.drawGrid();
@@ -326,7 +327,7 @@ public abstract class ChessBoard  {
 	}
 	
     private void drawBoard() {
-    	game.getGraphics().drawPixmap( chessBoardImage , paddingX , paddingY , boardWidth , boardHeight );
+    	game.getGraphics().drawPixmap(chessBoardImage, paddingX, paddingY, boardWidth, boardHeight);
     }
     
     private void drawFigures() {
@@ -342,7 +343,7 @@ public abstract class ChessBoard  {
         		pixmap = game.getGraphics().newPixmap( figure.getImage() , PixmapFormat.ARGB8888 );
     		}
     		game.getGraphics().drawPixmap( pixmap  , getXPixel(figure.getX()) + figurePaddin , getYPixel(figure.getY()) + figurePaddin , figureWidth , figureHeight );
-    	}
+        }
     }
     
     private void drawAiTurns() {
@@ -358,7 +359,7 @@ public abstract class ChessBoard  {
 
     }
 
-    private void drawGameTime() {
+    public void drawGameTime() {
         int minutes = gameTime / 60 ;
         int seconds = gameTime % 60 ;
         int hours   = gameTime / 360;
@@ -382,7 +383,7 @@ public abstract class ChessBoard  {
             hoursC = String.valueOf( hours );
 
         Pixmap pixmap = game.getGraphics().newPixmap( "timer.png" , PixmapFormat.RGB565 );
-        game.getGraphics().drawPixmap(pixmap, game.getGraphics().getWidth() - 90, 0, 90, 30);
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 90, 0 );
         game.getGraphics().drawText( hoursC + ":" + minutesC + ":" + secondsC , game.getGraphics().getWidth() - 8 , 22 , 20 , 0xff000000 , Paint.Align.RIGHT );
     }
     
@@ -395,15 +396,21 @@ public abstract class ChessBoard  {
 		game.getGraphics().drawText( "Move "  ,  game.getGraphics().getWidth() / 2 , 20 , 20 , 0xff000000 , Paint.Align.RIGHT );
 		Pixmap pixmap;
 		if( WHOSE_TURN == 0 ) 
-			pixmap = game.getGraphics().newPixmap( "checkerBlack.png" , PixmapFormat.RGB565 );
+			pixmap = game.getGraphics().newPixmap( "checkerBlack1.png" , PixmapFormat.RGB565 );
 		else
-			pixmap = game.getGraphics().newPixmap( "checkerWhite.png" , PixmapFormat.RGB565 );
-		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() / 2 , 0 , 32 , 32 );
+			pixmap = game.getGraphics().newPixmap( "checkerWhite1.png" , PixmapFormat.RGB565 );
+		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() / 2 , 0 , 30 , 30 );
     }
     
     protected void drawBottomMenu() {
-    	Pixmap pixmap;
-    	if( history.getTurn() > 1) {
+        Pixmap pixmap;
+
+        pixmap = game.getGraphics().newPixmap( "menu.jpg" , PixmapFormat.RGB565 );
+        game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 35 , boardWidth , 35 );
+
+        game.getGraphics().drawPixmap( pixmap  , 0 , 0 , boardWidth , 30 );
+
+        if( history.getTurn() > 1) {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
     		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 );
     	}
@@ -411,7 +418,7 @@ public abstract class ChessBoard  {
 
     	pixmap = game.getGraphics().newPixmap( "Close-2-icon-32.png" , PixmapFormat.RGB565 );
 		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 );
-		
+
     }
     
     public List<Figure> getFigures() {
@@ -436,6 +443,11 @@ public abstract class ChessBoard  {
 
     public int getGameTime() {
         return gameTime;
+    }
+
+    public void clearTimer() {
+        timer.cancel();
+        timer = null;
     }
 	
     protected abstract void initializeFigures();

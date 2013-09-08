@@ -28,8 +28,10 @@ public class СheckersCornersActivity extends Screen {
 		List<KeyEvent>     keyEvents = game.getInput().getKeyEvents();  
 		int len;
 		len = keyEvents.size();
+        cornersGame.drawGameTime();
 		for( int k = 0 ; k < len ; k ++ ) {
 			if( keyEvents.get(k).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
+                cornersGame.clearTimer();
 				game.setScreen( new MainMenu( game ) );
 			}
 		}
