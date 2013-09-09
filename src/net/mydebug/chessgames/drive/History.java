@@ -43,7 +43,7 @@ public class History implements HistoryInterface {
 
 		byte[] savedData = Serialize.serialize( data );
 
-		historyDb.addTurn( gameId, ++turnId, savedData , board.getTurn() , board.getGameTime() );
+		historyDb.addTurn( gameId, ++turnId, savedData , board.getTurn() , (int)board.getGameTime() );
 	}
 
 	@SuppressWarnings("rawtypes")

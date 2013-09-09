@@ -4,17 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
+import android.graphics.*;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
-import android.graphics.Rect;
-import android.graphics.Matrix;
-import android.graphics.Typeface;
 
 
 import com.badlogic.androidgames.framework.Graphics;
@@ -194,5 +188,10 @@ public class AndroidGraphics implements Graphics {
     @Override
     public int getHeight() {
         return frameBuffer.getHeight();
+    }
+
+    @Override
+    public void drawColor( int color ) {
+        canvas.drawColor( color , PorterDuff.Mode.CLEAR );
     }
 }

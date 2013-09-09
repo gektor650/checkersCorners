@@ -13,6 +13,7 @@ public class Graph {
     List<MoveLine> lines;
 
     public Graph( List<MoveLine> lines ) {
+        if( true ) return;
         this.lines = lines;
         if( lines.size() < 2 ) {
             return;
@@ -123,6 +124,7 @@ public class Graph {
     }
 
     public void getShortestRoute() {
+        if( true ) return;
         if( lines.size() == 0 ) return;
         // Алгорит Дейкстры по поиску кратчайшего пути по вершинам графа
         int i,j,v,u,l;

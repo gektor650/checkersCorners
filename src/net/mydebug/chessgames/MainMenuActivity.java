@@ -17,7 +17,7 @@ import com.badlogic.androidgames.framework.Input.KeyEvent;
 import com.badlogic.androidgames.framework.impl.AndroidGame;
 
 
-public class MainMenu extends Screen{
+public class MainMenuActivity extends Screen{
 	
 	public class ImpossibleActions {
 		public String text;
@@ -38,7 +38,7 @@ public class MainMenu extends Screen{
     boolean onlyNewGame = true;
 	HistoryDb historyDb;
 	
-	public MainMenu ( Game game ) {
+	public MainMenuActivity(Game game) {
 		super(game);
 		historyDb = new HistoryDb( game.getActivity() );
 		menus.add( new ImpossibleActions("New game" )) ;
@@ -71,14 +71,14 @@ public class MainMenu extends Screen{
     	            	if( onlyNewGame ) {
     	            		switch( i ) {
     	    	            	case 1 : break;
-    	    	            	case 2 : break;
+                                case 2 : game.setScreen( new StatisticsActivity( game ) );break;
     	    	            	case 3 : System.exit(0);break;
     	            		}
     	            	} else {
     	            		switch( i ) {
 		    	            	case 1 : game.setScreen( new СheckersCornersActivity( game , false ) );break;
 		    	            	case 2 : break;
-		    	            	case 3 : break;
+		    	            	case 3 : game.setScreen( new StatisticsActivity( game ) );break;
 		    	            	case 4 : System.exit(0);break;
 		            		}
     	            	}

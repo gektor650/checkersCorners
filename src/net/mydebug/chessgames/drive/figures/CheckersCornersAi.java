@@ -18,33 +18,24 @@ public class CheckersCornersAi implements Ai {
 		this.color = color;
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
 		if( color == Figure.WHITE ) {
-			for( int i = 0 ; i < priorities.length ; i++ ) {
-				for( int j = 0 ; j < priorities.length ; j++ ) {
-					if( i > 4 && j > 3 ) {
-						priorities[i][j] = i+j+10;	
-					} else {
-						priorities[i][j] = i+j;	
-					}
-				}
-			}	
-//			priorities[0] = new int[]{1064, 1056, 1048, 24, 23, 20, 16, 8 };
-//			priorities[1] = new int[]{1056, 1049, 1042, 25, 22, 21, 14, 7 };
-//			priorities[2] = new int[]{1048, 1042, 1036, 26, 21, 18, 12, 6 };
-//			priorities[3] = new int[]{1040, 1035, 1030, 27, 20, 19, 10, 5 };
-//			priorities[4] = new int[]{22  , 24  , 26  , 28, 19, 18, 16, 8 };
-//			priorities[5] =  = new int[board.getBoardLength()][board.getBoardLength()];new int[]{18  , 20  , 22  , 20, 16, 12, 8 , 4 };
-//			priorities[6] = new int[]{16  , 14  , 12  , 10, 8 , 6 , 4 , 2 };
-//			priorities[7] = new int[]{8   , 7   , 6   , 5 , 4 , 3 , 2 , 1 };
-			
+			priorities[0] = new int[]{ 1  , 22  , 23  , 24, 25, 26, 27, 28 };
+            priorities[1] = new int[]{22  , 24  , 26  , 28, 30, 32, 34, 36 };
+            priorities[2] = new int[]{24  , 28  , 34  , 36, 40, 42, 40, 38 };
+            priorities[3] = new int[]{28  , 36  , 38  , 39, 48, 46, 44, 42 };
+            priorities[4] = new int[]{25, 30, 39, 40, 47, 1030, 1035, 1040 };
+            priorities[5] = new int[]{26, 32, 38, 41, 46, 1036, 1042, 1048 };
+            priorities[6] = new int[]{27, 34, 41, 42, 45, 1042, 1049, 1056 };
+            priorities[7] = new int[]{28, 36, 40, 42, 44, 1048, 1056, 1064 };
+
 		} else {
-			priorities[0] = new int[]{1064, 1056, 1048, 24, 23, 20, 16, 8 };
-			priorities[1] = new int[]{1056, 1049, 1042, 25, 22, 21, 14, 7 };
-			priorities[2] = new int[]{1048, 1042, 1036, 26, 21, 18, 12, 6 };
-			priorities[3] = new int[]{1040, 1035, 1030, 27, 20, 19, 10, 5 };
-			priorities[4] = new int[]{22  , 24  , 26  , 28, 19, 18, 16, 8 };
-			priorities[5] = new int[]{18  , 20  , 22  , 20, 16, 12, 8 , 4 };
-			priorities[6] = new int[]{16  , 14  , 12  , 10, 8 , 6 , 4 , 2 };
-			priorities[7] = new int[]{8   , 7   , 6   , 5 , 4 , 3 , 2 , 1 };
+			priorities[0] = new int[]{1064, 1056, 1048, 44, 43, 40, 38, 28 };
+			priorities[1] = new int[]{1056, 1049, 1042, 45, 42, 41, 36, 27 };
+			priorities[2] = new int[]{1048, 1042, 1036, 46, 41, 38, 34, 26 };
+			priorities[3] = new int[]{1040, 1035, 1030, 47, 40, 39, 32, 28 };
+			priorities[4] = new int[]{42  , 44  , 46  , 48, 39, 38, 30, 26 };
+			priorities[5] = new int[]{38  , 40  , 42  , 40, 36, 32, 28, 24 };
+			priorities[6] = new int[]{36  , 34  , 32  , 30, 28, 26, 24, 22 };
+			priorities[7] = new int[]{28  , 27  , 26  , 25, 24, 23, 22,  1 };
 			
 		}
 //		for( int i = 0 ; i < priorities.length ; i++ ) {

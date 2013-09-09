@@ -14,7 +14,7 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
-import net.mydebug.chessgames.MainMenu;
+import net.mydebug.chessgames.MainMenuActivity;
 import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
@@ -25,6 +25,8 @@ public abstract class ChessBoard  {
 	private Pixmap chessBoardImage;
 	protected Game game;
 	protected Timer timer;
+    protected Statistic statistic;
+
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
 	protected List<MoveLine> tipsLines 		 = new ArrayList<MoveLine>();
@@ -63,7 +65,7 @@ public abstract class ChessBoard  {
 	protected int[][] figuresOnBoard = new int[CHESSBOARD_FIELDS_COUNT][CHESSBOARD_FIELDS_COUNT];
 	protected int activeFigure = -1;
 
-    private int gameTime = 0;
+    private float gameTime = 0;
 	
 	public ChessBoard(Game game , boolean isNew) {
     	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
@@ -87,7 +89,8 @@ public abstract class ChessBoard  {
         boardHeight = boardWidth;
         figureWidth = figureHeight = fieldWidth * 0.8f;
         figurePaddin = fieldWidth * 0.1f;
-    	history = new History( game , isNew );
+    	history   = new History( game , isNew );
+        statistic = new Statistic( game );
         if( isNew ) {
             this.initializeFigures();
             this.setFiguresOnBoard();
@@ -98,6 +101,7 @@ public abstract class ChessBoard  {
 				gameOver();
 			}
         }
+
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -149,7 +153,7 @@ public abstract class ChessBoard  {
     		// Если нажали в нижний правый угол (иконка выйти в меню)
     		} else if( x > game.getGraphics().getWidth() - 32) {
                 this.clearTimer();
-                game.setScreen( new MainMenu( game ) );
+                game.setScreen( new MainMenuActivity( game ) );
     		}
     	}
  
@@ -264,7 +268,8 @@ public abstract class ChessBoard  {
 //        Pixmap chessBoardImage = game.getGraphics().newPixmap("13410109-vector-realistic-wood-texture-background-grey-color.jpg", Graphics.PixmapFormat.ARGB8888 );
         Pixmap chessBoardImage = game.getGraphics().newPixmap("950890_72529114.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap(chessBoardImage, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight());
-    	this.drawBoard();
+        chessBoardImage.dispose();
+        this.drawBoard();
     	this.drawFigures();
     	this.drawTips();
         this.drawAiTurns();
@@ -343,6 +348,7 @@ public abstract class ChessBoard  {
         		pixmap = game.getGraphics().newPixmap( figure.getImage() , PixmapFormat.ARGB8888 );
     		}
     		game.getGraphics().drawPixmap( pixmap  , getXPixel(figure.getX()) + figurePaddin , getYPixel(figure.getY()) + figurePaddin , figureWidth , figureHeight );
+            pixmap.dispose();
         }
     }
     
@@ -360,9 +366,9 @@ public abstract class ChessBoard  {
     }
 
     public void drawGameTime() {
-        int minutes = gameTime / 60 ;
-        int seconds = gameTime % 60 ;
-        int hours   = gameTime / 360;
+        int minutes = (int) gameTime / 60 ;
+        int seconds = (int) gameTime % 60 ;
+        int hours   = (int) gameTime / 360;
         String secondsC;
         String minutesC;
         String hoursC;
@@ -383,8 +389,9 @@ public abstract class ChessBoard  {
             hoursC = String.valueOf( hours );
 
         Pixmap pixmap = game.getGraphics().newPixmap( "timer.png" , PixmapFormat.RGB565 );
-        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 90, 0 );
-        game.getGraphics().drawText( hoursC + ":" + minutesC + ":" + secondsC , game.getGraphics().getWidth() - 8 , 22 , 20 , 0xff000000 , Paint.Align.RIGHT );
+        game.getGraphics().drawPixmap(pixmap, game.getGraphics().getWidth() - 90, 0);
+        pixmap.dispose();
+//        game.getGraphics().drawText( hoursC + ":" + minutesC + ":" + secondsC , game.getGraphics().getWidth() - 8 , 22 , 20 , 0xff000000 , Paint.Align.RIGHT );
     }
     
     public int getBoardLength() {
@@ -400,6 +407,7 @@ public abstract class ChessBoard  {
 		else
 			pixmap = game.getGraphics().newPixmap( "checkerWhite1.png" , PixmapFormat.RGB565 );
 		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() / 2 , 0 , 30 , 30 );
+        pixmap.dispose();
     }
     
     protected void drawBottomMenu() {
@@ -409,15 +417,17 @@ public abstract class ChessBoard  {
         game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 35 , boardWidth , 35 );
 
         game.getGraphics().drawPixmap( pixmap  , 0 , 0 , boardWidth , 30 );
-
+        pixmap.dispose();
         if( history.getTurn() > 1) {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
     		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 );
-    	}
+            pixmap.dispose();
+        }
     	
 
     	pixmap = game.getGraphics().newPixmap( "Close-2-icon-32.png" , PixmapFormat.RGB565 );
 		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() - 32 , game.getGraphics().getHeight() - 32 );
+        pixmap.dispose();
 
     }
     
@@ -441,8 +451,12 @@ public abstract class ChessBoard  {
 		this.tipsLines = aviableDirectionsLines;
 	}
 
-    public int getGameTime() {
+    public float getGameTime() {
         return gameTime;
+    }
+
+    public void setGameTime( float time ) {
+        gameTime = time ;
     }
 
     public void clearTimer() {

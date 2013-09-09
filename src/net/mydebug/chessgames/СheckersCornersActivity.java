@@ -3,9 +3,6 @@ package net.mydebug.chessgames;
 import java.util.List;
 
 import net.mydebug.chessgames.drive.CheckersCornersGame;
-import net.mydebug.chessgames.drive.ChessBoard;
-
-import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Screen;
@@ -14,6 +11,7 @@ import com.badlogic.androidgames.framework.Input.KeyEvent;
 
 public class СheckersCornersActivity extends Screen {
 	CheckersCornersGame cornersGame ;
+    float updateTime = 0;
 	public СheckersCornersActivity( Game game  , boolean newGame ) {
 		super( game );
 		game.getGraphics().clear(0xff964009);
@@ -28,11 +26,15 @@ public class СheckersCornersActivity extends Screen {
 		List<KeyEvent>     keyEvents = game.getInput().getKeyEvents();  
 		int len;
 		len = keyEvents.size();
-        cornersGame.drawGameTime();
-		for( int k = 0 ; k < len ; k ++ ) {
+        updateTime += deltaTime;
+        if( updateTime >= 1 ) {
+//            cornersGame.drawGameTime();
+            updateTime = 0;
+        }
+        for( int k = 0 ; k < len ; k ++ ) {
 			if( keyEvents.get(k).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
                 cornersGame.clearTimer();
-				game.setScreen( new MainMenu( game ) );
+				game.setScreen( new MainMenuActivity( game ) );
 			}
 		}
 		len = touchEvents.size();
