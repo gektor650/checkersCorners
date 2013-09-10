@@ -24,6 +24,8 @@
         </activity>
       		<provider android:name="net.mydebug.chessgames.drive.db.HistoryProvider"
    				android:authorities="net.mydebug.chessgames.drive.db.HistoryProvider"/>
+      		<provider android:name="net.mydebug.chessgames.drive.db.StatisticProvider"
+   				android:authorities="net.mydebug.chessgames.drive.db.StatisticProvider"/>
     </application>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
    	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 

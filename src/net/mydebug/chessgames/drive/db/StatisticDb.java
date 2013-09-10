@@ -25,12 +25,6 @@ public class StatisticDb {
         mContext = ctx;
     }
 
-    public static final String STATISTIC_TURNS_CNT     = "turns_cnt";
-    public static final String STATISTIC_GAME_TIME     = "game_time";
-    public static final String STATISTIC_GAME_LEVEL    = "game_level";
-    public static final String STATISTIC_FIGURES_COLOR = "figures_color";
-    public static final String CREATED_DATE            = "created";
-
     public void addRow( int turns_cnt , int game_time , int game_level , int figures_color )
     {
         ContentValues cv = new ContentValues();
@@ -40,29 +34,37 @@ public class StatisticDb {
         cv.put(StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_FIGURES_COLOR , figures_color );
 
         ContentResolver cr = this.mContext.getContentResolver();
-        Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
+        Uri uri = StatisticProviderMetaData.StatisticTableMetaData.CONTENT_URI;
         cr.insert(uri, cv);
     }
 
     public List<StatisticRow> getStatistics( int limit ) {
-        if(true) return null;
         List<StatisticRow> rows = new ArrayList<StatisticRow>();
         Uri uri = StatisticProviderMetaData.StatisticTableMetaData.CONTENT_URI;
         Activity a = (Activity)this.mContext;
-        Cursor c = a.getContentResolver().query(uri, null, null, null, null);
+        Cursor c = a.getContentResolver().query(uri ,
+                new String []{
+                    StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_TURNS_CNT,
+                    StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_GAME_TIME,
+                    StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_GAME_LEVEL,
+                    StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_FIGURES_COLOR
+                }
+                , null, null, null);
+
         int turnsCnt    = c.getColumnIndex( StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_TURNS_CNT );
         int gameTime    = c.getColumnIndex( StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_GAME_TIME );
         int gameLevel   = c.getColumnIndex( StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_GAME_LEVEL );
         int figureColor = c.getColumnIndex( StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_FIGURES_COLOR );
         c.moveToFirst();
-        while( ! c.isLast() && rows.size() < limit ) {
-            StatisticRow row = new StatisticRow();
-            row.turnsCnt    = c.getInt( turnsCnt );
-            row.gameLevel   = c.getInt( gameLevel );
-            row.gameTime    = c.getInt( gameTime );
-            row.figureColor = c.getInt( figureColor );
-            rows.add( row );
-            c.moveToNext();
+        if( c.getCount() > 0 ) {
+            do {
+                StatisticRow row = new StatisticRow();
+                row.turnsCnt    = c.getInt( turnsCnt );
+                row.gameLevel   = c.getInt( gameLevel );
+                row.gameTime    = c.getInt( gameTime );
+                row.figureColor = c.getInt( figureColor );
+                rows.add( row );
+            } while( c.moveToNext() && rows.size() <= limit );
         }
         c.close();
 

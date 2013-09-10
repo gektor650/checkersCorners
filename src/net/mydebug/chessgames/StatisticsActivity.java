@@ -1,9 +1,11 @@
 package net.mydebug.chessgames;
 
+import android.graphics.Paint;
 import com.badlogic.androidgames.framework.*;
 import net.mydebug.chessgames.drive.Statistic;
 import net.mydebug.chessgames.drive.StatisticRow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,16 +17,66 @@ import java.util.List;
  */
 public class StatisticsActivity extends Screen {
 
+    protected int rowsCnt = 10;
     protected Statistic statistic;
-    protected List<StatisticRow> statisticsData = null;
+    protected List<StatisticRow> statisticsData = new ArrayList<StatisticRow>();
 
     public StatisticsActivity(Game game) {
         super(game);
         Pixmap background = game.getGraphics().newPixmap("old_wood_and_paper_vector_1.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( background, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() );
-        game.getGraphics().drawText("Back" ,  game.getGraphics().getWidth() - 60 , game.getGraphics().getHeight() - 40 , 20 , 0xff000000 );
-        statistic      = new Statistic( game );
-        statisticsData = statistic.getStatistics( 5 );
+        game.getGraphics().drawText("Back", game.getGraphics().getWidth() - 60, game.getGraphics().getHeight() - 40, 20, 0xff000000);
+        statistic      = new Statistic( game.getActivity() );
+        statisticsData = statistic.getStatistics( rowsCnt );
+        int statisticTableWidth = ( game.getGraphics().getWidth() - game.getGraphics().getWidth() / 6 ) / 4;
+        int topPadding = game.getGraphics().getHeight() / 6 ;
+        game.getGraphics().drawText( "Ходов" , statisticTableWidth , topPadding , 14 , 0xff000000, Paint.Align.CENTER );
+        game.getGraphics().drawText( "Время" , statisticTableWidth * 2 , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
+        game.getGraphics().drawText( "Уровень" , statisticTableWidth * 3  , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
+        game.getGraphics().drawText( "Цвет" , statisticTableWidth * 4 , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
+        game.getGraphics().drawLine(
+                statisticTableWidth - statisticTableWidth / 2,
+                topPadding + 5 ,
+                statisticTableWidth * 4 + statisticTableWidth / 2  ,
+                topPadding + 5 ,
+                0xff000000 , 2 );
+        for( int i = 1 ; i < 4 ; i++ )  {
+            game.getGraphics().drawLine(
+                    i * statisticTableWidth + statisticTableWidth / 2,
+                    topPadding - 20 ,
+                    i * statisticTableWidth + statisticTableWidth / 2,
+                    topPadding * 5 + 20 ,
+                    0xff000000 );
+        }
+        topPadding = topPadding + 30;
+        int innerPadding = topPadding * 3 / rowsCnt ;
+        String turnsCnt;
+        String gameTime;
+        String gameLevel;
+        String figureColor;
+        for ( int i = 0 ; i < rowsCnt ; i++ ) {
+            turnsCnt    = "--";
+            gameTime    = "--";
+            gameLevel   = "--";
+            figureColor = "--";
+            if( i < statisticsData.size() ) {
+                turnsCnt    = String.valueOf( statisticsData.get(i).turnsCnt );
+                gameTime    = String.valueOf( statisticsData.get(i).gameTime );
+                gameLevel   = String.valueOf( statisticsData.get(i).gameLevel );
+                figureColor = String.valueOf( statisticsData.get(i).figureColor );
+            }
+            game.getGraphics().drawText( turnsCnt , statisticTableWidth , topPadding + ( i * innerPadding ) , 14 , 0xff000000, Paint.Align.CENTER );
+            game.getGraphics().drawText( gameTime , statisticTableWidth * 2 , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+            game.getGraphics().drawText( gameLevel , statisticTableWidth * 3  , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+            game.getGraphics().drawText( figureColor , statisticTableWidth * 4 , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+            game.getGraphics().drawLine(
+                    statisticTableWidth - statisticTableWidth / 2,
+                    topPadding + ( i * innerPadding ) + 5 ,
+                    statisticTableWidth * 4 + statisticTableWidth / 2  ,
+                    topPadding + ( i * innerPadding ) + 5 ,
+                    0xff000000 );
+
+        }
 
     }
 
@@ -43,7 +95,7 @@ public class StatisticsActivity extends Screen {
             if( event.type == Input.TouchEvent.TOUCH_UP ) {
                 if( event.y > game.getGraphics().getHeight() - 60 ) {
                     // Если нажали в нижний правый угол (иконка выйти в меню)
-                    if( event.x  > game.getGraphics().getWidth() - 40 ) {
+                    if( event.x  > game.getGraphics().getWidth() - 80 ) {
                         game.setScreen( new MainMenuActivity( game ) );
                     }
                 }

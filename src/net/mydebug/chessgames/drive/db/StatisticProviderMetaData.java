@@ -14,7 +14,7 @@ public class StatisticProviderMetaData {
     public static final String AUTHORITY = "net.mydebug.chessgames.drive.db.StatisticProvider";
 
     public static final String DATABASE_NAME = "statistic.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     private StatisticProviderMetaData() {}
     //inner class describing columns and their types

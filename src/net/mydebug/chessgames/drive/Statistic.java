@@ -1,5 +1,6 @@
 package net.mydebug.chessgames.drive;
 
+import android.app.Activity;
 import com.badlogic.androidgames.framework.Game;
 import net.mydebug.chessgames.drive.db.StatisticDb;
 
@@ -13,16 +14,18 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class Statistic {
-    Game game ;
     StatisticDb statisticDb;
 
-    public Statistic( Game game ) {
-        this.game = game;
-        statisticDb = new StatisticDb( game.getActivity() );
+    public Statistic( Activity activity ) {
+        statisticDb = new StatisticDb( activity );
     }
 
     public List<StatisticRow> getStatistics( int limit ) {
         return statisticDb.getStatistics( limit );
+    }
+
+    public void add( int turnsCnt , int gameTime , int gameLevel , int figureColor ) {
+        statisticDb.addRow( turnsCnt , gameTime , gameLevel , figureColor );
     }
 
 }

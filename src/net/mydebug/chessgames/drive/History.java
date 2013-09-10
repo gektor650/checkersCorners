@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+import android.app.Activity;
 import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
@@ -20,12 +20,10 @@ public class History implements HistoryInterface {
 	List<Figure> figures = new ArrayList<Figure>();
 	int 		  turnId = 0;
 	int 	      gameId = 1;
-	Game 		   game ;
 	HistoryDb historyDb;
 	
-	public History( Game game , boolean isNew ) {
-		this.game = game;
-		historyDb = new HistoryDb( game.getActivity() );
+	public History( Activity activity , boolean isNew ) {
+		historyDb = new HistoryDb( activity );
 		if( isNew )
 			historyDb.clearAll();
 		else
@@ -77,7 +75,6 @@ public class History implements HistoryInterface {
 	public int lastGameTime( ) {
 		int gameTime = 0;
         gameTime = historyDb.getLastGameTime(gameId, turnId);
-        System.out.println(gameTime);
         return gameTime;
 	}
 
@@ -87,6 +84,11 @@ public class History implements HistoryInterface {
 	public int getTurn() {
 		return turnId;
 	}
+
+    @Override
+    public void clear() {
+         historyDb.clearAll();
+    }
 	
 
 }

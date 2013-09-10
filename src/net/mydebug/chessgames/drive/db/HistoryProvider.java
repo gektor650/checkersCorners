@@ -194,7 +194,7 @@ public class HistoryProvider extends ContentProvider{
 	        if (values.containsKey(HistoryTableMetaData.HISTORY_GAME_ID) == false) 
 	        {
 	            throw new SQLException(
-	               "Failed to insert row because Book Name is needed " + uri);
+	               "Missing history game ID " + uri);
 	        }
 
 	        if (values.containsKey(HistoryTableMetaData.HISTORY_TURN_ID) == false) {

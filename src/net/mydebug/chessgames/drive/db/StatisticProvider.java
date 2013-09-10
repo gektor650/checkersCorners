@@ -183,11 +183,10 @@ public class StatisticProvider extends ContentProvider {
             values = new ContentValues();
         }
 
-        Long now = Long.valueOf(System.currentTimeMillis());
-
         // Make sure that the fields are all set
         if (values.containsKey(StatisticProviderMetaData.StatisticTableMetaData.CREATED_DATE) == false)
         {
+            Long now = Long.valueOf(System.currentTimeMillis());
             values.put(StatisticProviderMetaData.StatisticTableMetaData.CREATED_DATE, now);
         }
 
