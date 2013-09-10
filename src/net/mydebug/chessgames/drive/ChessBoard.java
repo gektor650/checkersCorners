@@ -369,29 +369,23 @@ public abstract class ChessBoard  {
         int minutes = (int) gameTime / 60 ;
         int seconds = (int) gameTime % 60 ;
         int hours   = (int) gameTime / 360;
-        String secondsC;
-        String minutesC;
-        String hoursC;
 
-        if( seconds < 10 )
-            secondsC = "0" + seconds;
-        else
-            secondsC = String.valueOf( seconds );
-
-        if( minutes < 10 )
-            minutesC = "0" + minutes;
-        else
-            minutesC = String.valueOf( minutes );
-
-        if( hours < 10 )
-            hoursC = "0" + hours;
-        else
-            hoursC = String.valueOf( hours );
-
-        Pixmap pixmap = game.getGraphics().newPixmap( "timer.png" , PixmapFormat.RGB565 );
-        game.getGraphics().drawPixmap(pixmap, game.getGraphics().getWidth() - 90, 0);
+        Pixmap pixmap = game.getGraphics().newPixmap( "numbers.jpg" , PixmapFormat.RGB565 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 20 , 0 , 20 * ( seconds % 10 ) , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 40 , 0 , 20 * ( (int) seconds / 10 ) , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 60 , 0 , 200 , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 80 , 0 , 20 * ( minutes % 10 ) , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 100 , 0 , 20 * ( (int) minutes / 10 ) , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 120 , 0 , 200 , 0 ,
+        21  , 30 );
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 140 , 0 , 20 * ( hours % 10 ) , 0 ,
+                21  , 30 );
         pixmap.dispose();
-//        game.getGraphics().drawText( hoursC + ":" + minutesC + ":" + secondsC , game.getGraphics().getWidth() - 8 , 22 , 20 , 0xff000000 , Paint.Align.RIGHT );
     }
     
     public int getBoardLength() {
@@ -400,13 +394,13 @@ public abstract class ChessBoard  {
     
     protected void drawInfo() {
 		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurn() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
-		game.getGraphics().drawText( "Move "  ,  game.getGraphics().getWidth() / 2 , 20 , 20 , 0xff000000 , Paint.Align.RIGHT );
+		game.getGraphics().drawText( " - move "  ,  30 , 20 , 20 , 0xff000000 , Paint.Align.LEFT );
 		Pixmap pixmap;
 		if( WHOSE_TURN == 0 ) 
 			pixmap = game.getGraphics().newPixmap( "checkerBlack1.png" , PixmapFormat.RGB565 );
 		else
 			pixmap = game.getGraphics().newPixmap( "checkerWhite1.png" , PixmapFormat.RGB565 );
-		game.getGraphics().drawPixmap( pixmap  , game.getGraphics().getWidth() / 2 , 0 , 30 , 30 );
+		game.getGraphics().drawPixmap( pixmap  , 0 , 0 , 30 , 30 );
         pixmap.dispose();
     }
     

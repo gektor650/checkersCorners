@@ -28,7 +28,7 @@ public class СheckersCornersActivity extends Screen {
 		len = keyEvents.size();
         updateTime += deltaTime;
         if( updateTime >= 1 ) {
-//            cornersGame.drawGameTime();
+            cornersGame.drawGameTime();
             updateTime = 0;
         }
         for( int k = 0 ; k < len ; k ++ ) {
