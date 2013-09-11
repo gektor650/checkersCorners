@@ -40,10 +40,12 @@ public abstract class ChessBoard  {
 	public final static int CHESSBOARD_FIELDS_COUNT = 8;
 	public static int BOARD_SHOW_TIPS = 1;
 	private int WHOSE_TURN = Figure.WHITE;
-	protected final int ONE_PLAYER = 0;
-	protected final int PLAYER_COLOR = Figure.WHITE;
+
+	public static final int ONE_PLAYER = 0;
+    public static final int TWO_PLAYERS = 1;
+
+    protected final int PLAYER_COLOR = Figure.WHITE;
 	protected final int AI_COLOR     = Figure.BLACK;
-	protected final int TWO_PLAYERS = 1;
 
     protected boolean gameOver = false;
 
