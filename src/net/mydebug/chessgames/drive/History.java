@@ -81,7 +81,7 @@ public class History implements HistoryInterface {
 
 
 	@Override
-	public int getTurn() {
+	public int getTurnId() {
 		return turnId;
 	}
 

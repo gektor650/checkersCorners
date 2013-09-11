@@ -4,6 +4,8 @@ import android.graphics.Paint;
 import com.badlogic.androidgames.framework.*;
 import net.mydebug.chessgames.drive.Statistic;
 import net.mydebug.chessgames.drive.StatisticRow;
+import net.mydebug.chessgames.drive.figures.Checker;
+import net.mydebug.chessgames.drive.figures.CheckerCorners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +36,13 @@ public class StatisticsActivity extends Screen {
         game.getGraphics().drawText( "Время" , statisticTableWidth * 2 , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
         game.getGraphics().drawText( "Уровень" , statisticTableWidth * 3  , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
         game.getGraphics().drawText( "Цвет" , statisticTableWidth * 4 , topPadding , 14 , 0xff000000 , Paint.Align.CENTER );
+        int horizontLineX = statisticTableWidth - statisticTableWidth / 2 + 5 ;
+        int horizontLineY = statisticTableWidth * 4 + statisticTableWidth / 2 - 5 ;
+
         game.getGraphics().drawLine(
-                statisticTableWidth - statisticTableWidth / 2,
+                horizontLineX  ,
                 topPadding + 5 ,
-                statisticTableWidth * 4 + statisticTableWidth / 2  ,
+                horizontLineY  ,
                 topPadding + 5 ,
                 0xff000000 , 2 );
         for( int i = 1 ; i < 4 ; i++ )  {
@@ -48,31 +53,43 @@ public class StatisticsActivity extends Screen {
                     topPadding * 5 + 20 ,
                     0xff000000 );
         }
+        CheckerCorners checker = new CheckerCorners();
         topPadding = topPadding + 30;
         int innerPadding = topPadding * 3 / rowsCnt ;
         String turnsCnt;
         String gameTime;
         String gameLevel;
-        String figureColor;
+        String figureImage;
+        Pixmap delimeterImage = game.getGraphics().newPixmap("dash.jpg", Graphics.PixmapFormat.ARGB8888 );
+        Pixmap checkerImage ;
         for ( int i = 0 ; i < rowsCnt ; i++ ) {
-            turnsCnt    = "--";
-            gameTime    = "--";
-            gameLevel   = "--";
-            figureColor = "--";
             if( i < statisticsData.size() ) {
                 turnsCnt    = String.valueOf( statisticsData.get(i).turnsCnt );
                 gameTime    = String.valueOf( statisticsData.get(i).gameTime );
                 gameLevel   = String.valueOf( statisticsData.get(i).gameLevel );
-                figureColor = String.valueOf( statisticsData.get(i).figureColor );
+                checker.setColor( statisticsData.get(i).figureColor );
+                checkerImage = game.getGraphics().newPixmap( checker.getImage() , Graphics.PixmapFormat.ARGB8888 ); checker.getImage();
+
+                game.getGraphics().drawText( turnsCnt , statisticTableWidth , topPadding + ( i * innerPadding ) , 14 , 0xff000000, Paint.Align.CENTER );
+                game.getGraphics().drawText( gameTime , statisticTableWidth * 2 , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+                game.getGraphics().drawText( gameLevel , statisticTableWidth * 3  , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+                game.getGraphics().drawPixmap(
+                        checkerImage ,
+                        statisticTableWidth * 4 - innerPadding / 4,
+                        topPadding + ( i * innerPadding ) - innerPadding / 2 ,
+                        innerPadding / 2 ,
+                        innerPadding / 2 );
+            } else {
+                game.getGraphics().drawPixmap(delimeterImage, statisticTableWidth - 7, topPadding + (i * innerPadding) - 10);
+                game.getGraphics().drawPixmap(delimeterImage, statisticTableWidth * 2 - 7, topPadding + (i * innerPadding) - 10);
+                game.getGraphics().drawPixmap(delimeterImage, statisticTableWidth * 3 - 7, topPadding + (i * innerPadding) - 10);
+                game.getGraphics().drawPixmap(delimeterImage, statisticTableWidth * 4 - 7, topPadding + (i * innerPadding) - 10);
             }
-            game.getGraphics().drawText( turnsCnt , statisticTableWidth , topPadding + ( i * innerPadding ) , 14 , 0xff000000, Paint.Align.CENTER );
-            game.getGraphics().drawText( gameTime , statisticTableWidth * 2 , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
-            game.getGraphics().drawText( gameLevel , statisticTableWidth * 3  , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
-            game.getGraphics().drawText( figureColor , statisticTableWidth * 4 , topPadding + ( i * innerPadding ) , 14 , 0xff000000 , Paint.Align.CENTER );
+
             game.getGraphics().drawLine(
-                    statisticTableWidth - statisticTableWidth / 2,
+                    horizontLineX ,
                     topPadding + ( i * innerPadding ) + 5 ,
-                    statisticTableWidth * 4 + statisticTableWidth / 2  ,
+                    horizontLineY ,
                     topPadding + ( i * innerPadding ) + 5 ,
                     0xff000000 );
 

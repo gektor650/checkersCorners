@@ -18,6 +18,10 @@ public class CheckerCorners extends Checker {
 	ArrayList<Position> alreadyChecked    = new ArrayList<Position>();
 
 
+	public CheckerCorners(  ) {
+
+    }
+
 	public CheckerCorners(int color , int x , int y , ChessBoard board ) {
 		super(color , x , y , board );
 	}

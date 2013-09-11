@@ -7,7 +7,8 @@ import net.mydebug.chessgames.drive.Serialize;
 
 
 public abstract class Figure  {
-	
+
+    protected Figure(){}
 	
 	public static int WHITE = 1;
 	public static int BLACK = 0;

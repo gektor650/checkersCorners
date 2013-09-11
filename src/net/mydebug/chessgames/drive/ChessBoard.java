@@ -174,11 +174,13 @@ public abstract class ChessBoard  {
 		} else if( winner == Figure.BLACK ){
 			text = "Black wins!";
 		}
-        statistic.add( this.getTurn() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
-		history.clear();
         game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight() - 32 , 0x99cccccc);
-		game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
-		game.getGraphics().drawText( text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 + 10 , 20, 0xffff0000);
+        game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
+        game.getGraphics().drawText( text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 + 10 , 20, 0xffff0000);
+        drawBottomMenu();
+        statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
+        this.clearTimer();
+		history.clear();
     }
     
     
@@ -373,6 +375,7 @@ public abstract class ChessBoard  {
     }
 
     public void drawGameTime() {
+        if( timer == null ) return;
         int minutes = (int) gameTime / 60 ;
         int seconds = (int) gameTime % 60 ;
         int hours   = (int) gameTime / 360;
@@ -400,7 +403,7 @@ public abstract class ChessBoard  {
     }
     
     protected void drawInfo() {
-		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurn() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
+		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurnId() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
 		game.getGraphics().drawText( " - move "  ,  30 , 20 , 20 , 0xff000000 , Paint.Align.LEFT );
 		Pixmap pixmap;
 		if( WHOSE_TURN == 0 ) 
@@ -419,7 +422,7 @@ public abstract class ChessBoard  {
 
         game.getGraphics().drawPixmap( pixmap  , 0 , 0 , boardWidth , 30 );
         pixmap.dispose();
-        if( history.getTurn() > 1) {
+        if( history.getTurnId() > 1 && ! gameOver ) {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
     		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 );
             pixmap.dispose();
@@ -461,8 +464,10 @@ public abstract class ChessBoard  {
     }
 
     public void clearTimer() {
-        timer.cancel();
-        timer = null;
+        if( timer != null ) {
+            timer.cancel();
+            timer = null;
+        }
     }
     
     public int getGameLevel() {
