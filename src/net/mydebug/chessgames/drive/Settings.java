@@ -11,24 +11,18 @@ import java.io.*;
  * Time: 1:03
  * To change this template use File | Settings | File Templates.
  */
-public class Preferences {
+public class Settings {
 
-    public class PreferencesRow implements Serializable {
-        public int     gameMode;
-        public int     gameLevel;
-        public boolean showTips;
-        public int     playerColor;
-    }
 
     String path;
 
-    public Preferences( String path ) {
+    public Settings( String path ) {
         this.path = path + "/";
-        preferences = new PreferencesRow();
+        preferences = new SettingsRow();
         load();
     }
 
-    private PreferencesRow preferences ;
+    private SettingsRow preferences ;
     private String settingsFile = ".cornersSettings";
 
     public void save() {
@@ -51,7 +45,7 @@ public class Preferences {
         {
             FileInputStream fileIn = new FileInputStream( path + this.settingsFile );
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            preferences = ( PreferencesRow ) in.readObject();
+            preferences = (SettingsRow) in.readObject();
             in.close();
             fileIn.close();
             System.out.println("Load");

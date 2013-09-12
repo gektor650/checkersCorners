@@ -14,7 +14,7 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
-import net.mydebug.chessgames.MainMenuActivity;
+import net.mydebug.chessgames.MainMenuScreen;
 import net.mydebug.chessgames.drive.figures.Ai;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
@@ -159,7 +159,7 @@ public abstract class ChessBoard  {
     		// Если нажали в нижний правый угол (иконка выйти в меню)
     		} else if( x > game.getGraphics().getWidth() - 32) {
                 this.clearTimer();
-                game.setScreen( new MainMenuActivity( game ) );
+                game.setScreen( new MainMenuScreen( game ) );
     		}
     	}
  

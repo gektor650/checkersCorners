@@ -6,18 +6,14 @@ import java.util.List;
 import com.badlogic.androidgames.framework.Pixmap;
 import net.mydebug.chessgames.drive.db.HistoryDb;
 
-import android.app.Activity;
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Input.KeyEvent;
-import com.badlogic.androidgames.framework.impl.AndroidGame;
 
 
-public class MainMenuActivity extends Screen{
+public class MainMenuScreen extends Screen{
 	
 	public class ImpossibleActions {
 		public String text;
@@ -38,7 +34,7 @@ public class MainMenuActivity extends Screen{
     boolean onlyNewGame = true;
 	HistoryDb historyDb;
 	
-	public MainMenuActivity(Game game) {
+	public MainMenuScreen(Game game) {
 		super(game);
 		historyDb = new HistoryDb( game.getActivity() );
 		menus.add( new ImpossibleActions("New game" )) ;
@@ -66,19 +62,19 @@ public class MainMenuActivity extends Screen{
     		for(int i = 0 ; i < menus.size() ; i++ ) {
     			if( event.y < menus.get(i).y+15 && event.y > menus.get(i).y-15 ) {
     	            if( i == 0 ) {
-    	            	game.setScreen( new СheckersCornersActivity( game , true ) );	            	
+    	            	game.setScreen( new СheckersCornersScreen( game , true ) );
     	            } else {
     	            	if( onlyNewGame ) {
     	            		switch( i ) {
-    	    	            	case 1 : game.setScreen( new PreferencesActivity( game ) );break;
-                                case 2 : game.setScreen( new StatisticsActivity( game ) );break;
+    	    	            	case 1 : game.setScreen( new SettingsScreen( game ) );break;
+                                case 2 : game.setScreen( new StatisticsScreen( game ) );break;
     	    	            	case 3 : System.exit(0);break;
     	            		}
     	            	} else {
     	            		switch( i ) {
-		    	            	case 1 : game.setScreen( new СheckersCornersActivity( game , false ) );break;
-		    	            	case 2 : game.setScreen( new PreferencesActivity( game ) );break;
-		    	            	case 3 : game.setScreen( new StatisticsActivity( game ) );break;
+		    	            	case 1 : game.setScreen( new СheckersCornersScreen( game , false ) );break;
+		    	            	case 2 : game.setScreen( new SettingsScreen( game ) );break;
+		    	            	case 3 : game.setScreen( new StatisticsScreen( game ) );break;
 		    	            	case 4 : System.exit(0);break;
 		            		}
     	            	}

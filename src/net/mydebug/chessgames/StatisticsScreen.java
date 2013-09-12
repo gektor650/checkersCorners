@@ -4,7 +4,6 @@ import android.graphics.Paint;
 import com.badlogic.androidgames.framework.*;
 import net.mydebug.chessgames.drive.Statistic;
 import net.mydebug.chessgames.drive.StatisticRow;
-import net.mydebug.chessgames.drive.figures.Checker;
 import net.mydebug.chessgames.drive.figures.CheckerCorners;
 
 import java.util.ArrayList;
@@ -17,13 +16,13 @@ import java.util.List;
  * Time: 23:56
  * To change this template use File | Settings | File Templates.
  */
-public class StatisticsActivity extends Screen {
+public class StatisticsScreen extends Screen {
 
     protected int rowsCnt = 10;
     protected Statistic statistic;
     protected List<StatisticRow> statisticsData = new ArrayList<StatisticRow>();
 
-    public StatisticsActivity(Game game) {
+    public StatisticsScreen(Game game) {
         super(game);
         Pixmap background = game.getGraphics().newPixmap("old_wood_and_paper_vector_1.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( background, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() );
@@ -104,7 +103,7 @@ public class StatisticsActivity extends Screen {
 
         for( int j = 0 ; j < keyEvents.size() ; j ++ ) {
             if( keyEvents.get(j).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
-                game.setScreen(new MainMenuActivity(game));
+                game.setScreen(new MainMenuScreen(game));
             }
         }
         for( int i = 0 ; i < touchEvents.size() ; i++ ) {
@@ -113,7 +112,7 @@ public class StatisticsActivity extends Screen {
                 if( event.y > game.getGraphics().getHeight() - 60 ) {
                     // Если нажали в нижний правый угол (иконка выйти в меню)
                     if( event.x  > game.getGraphics().getWidth() - 80 ) {
-                        game.setScreen( new MainMenuActivity( game ) );
+                        game.setScreen( new MainMenuScreen( game ) );
                     }
                 }
             }

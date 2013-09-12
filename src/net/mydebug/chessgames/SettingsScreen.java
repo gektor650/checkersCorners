@@ -1,7 +1,7 @@
 package net.mydebug.chessgames;
 
 import com.badlogic.androidgames.framework.*;
-import net.mydebug.chessgames.drive.Preferences;
+import net.mydebug.chessgames.drive.Settings;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ import java.util.List;
  * Time: 0:53
  * To change this template use File | Settings | File Templates.
  */
-public class PreferencesActivity extends Screen {
+public class SettingsScreen extends Screen {
 
-    public PreferencesActivity(Game game) {
+    public SettingsScreen(Game game) {
         super(game);
-        Preferences preferences = new Preferences( game.getActivity().getBaseContext().getFilesDir().toString() );
+        Settings preferences = new Settings( game.getActivity().getBaseContext().getFilesDir().toString() );
         preferences.load();
         Pixmap background = game.getGraphics().newPixmap("old_wood_and_paper_vector_1.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( background, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() );
@@ -31,7 +31,7 @@ public class PreferencesActivity extends Screen {
 
         for( int j = 0 ; j < keyEvents.size() ; j ++ ) {
             if( keyEvents.get(j).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
-                game.setScreen(new MainMenuActivity(game));
+                game.setScreen(new MainMenuScreen(game));
             }
         }
         for( int i = 0 ; i < touchEvents.size() ; i++ ) {
@@ -40,7 +40,7 @@ public class PreferencesActivity extends Screen {
                 if( event.y > game.getGraphics().getHeight() - 60 ) {
                     // Если нажали в нижний правый угол (иконка выйти в меню)
                     if( event.x  > game.getGraphics().getWidth() - 80 ) {
-                        game.setScreen( new MainMenuActivity( game ) );
+                        game.setScreen( new MainMenuScreen( game ) );
                     }
                 }
             }

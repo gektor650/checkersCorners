@@ -21,11 +21,11 @@ public class Statistic {
     }
 
     public List<StatisticRow> getStatistics( int limit ) {
-        return statisticDb.getStatistics( limit );
+        return statisticDb.getList( limit );
     }
 
     public void add( int turnsCnt , int gameTime , int gameLevel , int figureColor ) {
-        statisticDb.addRow( turnsCnt , gameTime , gameLevel , figureColor );
+        statisticDb.add( turnsCnt , gameTime , gameLevel , figureColor );
     }
 
 }

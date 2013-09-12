@@ -25,7 +25,7 @@ public class StatisticDb {
         mContext = ctx;
     }
 
-    public void addRow( int turns_cnt , int game_time , int game_level , int figures_color )
+    public void add( int turns_cnt , int game_time , int game_level , int figures_color )
     {
         ContentValues cv = new ContentValues();
         cv.put(StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_TURNS_CNT, turns_cnt );
@@ -38,7 +38,7 @@ public class StatisticDb {
         cr.insert(uri, cv);
     }
 
-    public List<StatisticRow> getStatistics( int limit ) {
+    public List<StatisticRow> getList( int limit ) {
         List<StatisticRow> rows = new ArrayList<StatisticRow>();
         Uri uri = StatisticProviderMetaData.StatisticTableMetaData.CONTENT_URI;
         Activity a = (Activity)this.mContext;

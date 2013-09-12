@@ -9,10 +9,10 @@ import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Input.KeyEvent;
 
-public class СheckersCornersActivity extends Screen {
+public class СheckersCornersScreen extends Screen {
 	CheckersCornersGame cornersGame ;
     float updateTime = 0;
-	public СheckersCornersActivity( Game game  , boolean newGame ) {
+	public СheckersCornersScreen(Game game, boolean newGame) {
 		super( game );
 		game.getGraphics().clear(0xff964009);
 		cornersGame = new CheckersCornersGame( game , newGame );
@@ -34,7 +34,7 @@ public class СheckersCornersActivity extends Screen {
         for( int k = 0 ; k < len ; k ++ ) {
 			if( keyEvents.get(k).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
                 cornersGame.clearTimer();
-				game.setScreen( new MainMenuActivity( game ) );
+				game.setScreen( new MainMenuScreen( game ) );
 			}
 		}
 		len = touchEvents.size();

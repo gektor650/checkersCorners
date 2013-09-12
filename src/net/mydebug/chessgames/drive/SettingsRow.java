@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Time: 1:52
  * To change this template use File | Settings | File Templates.
  */
-public class PreferencesRow implements Serializable {
+public class SettingsRow implements Serializable {
     public int     gameMode;
     public int     gameLevel;
     public boolean showTips;
