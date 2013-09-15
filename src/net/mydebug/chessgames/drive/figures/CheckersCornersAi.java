@@ -95,8 +95,6 @@ public class CheckersCornersAi implements Ai {
                 positions  = figures.get(i).getAviableMoves();
                 if( positions.size() - 1 <= 0 ) continue;
                 int index   = rand.nextInt( positions.size() - 1 );
-
-                if( positions.size() - 1 <= 0 ) continue;
                 if( index > 0 ) {
                     result.figureIndex = i;
                     result.position    = (Position) positions.get( index );
