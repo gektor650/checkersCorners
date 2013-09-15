@@ -3,6 +3,8 @@ package net.mydebug.chessgames;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
+import android.net.Uri;
 import com.badlogic.androidgames.framework.Pixmap;
 import net.mydebug.chessgames.drive.db.HistoryDb;
 
@@ -42,8 +44,9 @@ public class MainMenuScreen extends Screen{
 			menus.add( new ImpossibleActions("Resume last game" )) ;	
 			onlyNewGame = false;
 		}
-		menus.add( new ImpossibleActions("Preferences")) ;
+		menus.add( new ImpossibleActions("Settings")) ;
 		menus.add( new ImpossibleActions("Statistics")) ;
+		menus.add( new ImpossibleActions("Say thanks")) ;
 		menus.add( new ImpossibleActions(   "Exit"   )) ;
         int paddingUp = (int)( height * 0.2 ) ;
         padding  = ( height - paddingUp )  / menus.size() ;
@@ -64,18 +67,34 @@ public class MainMenuScreen extends Screen{
     	            if( i == 0 ) {
     	            	game.setScreen( new СheckersCornersScreen( game , true ) );
     	            } else {
-    	            	if( onlyNewGame ) {
+                        if( onlyNewGame ) {
     	            		switch( i ) {
     	    	            	case 1 : game.setScreen( new SettingsScreen( game ) );break;
                                 case 2 : game.setScreen( new StatisticsScreen( game ) );break;
-    	    	            	case 3 : System.exit(0);break;
+                                case 3 :
+                                    String appName = "Уголки";
+                                    try {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
+                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+                                    }
+                                    break;
+    	    	            	case 4 : System.exit(0);break;
     	            		}
     	            	} else {
     	            		switch( i ) {
 		    	            	case 1 : game.setScreen( new СheckersCornersScreen( game , false ) );break;
 		    	            	case 2 : game.setScreen( new SettingsScreen( game ) );break;
 		    	            	case 3 : game.setScreen( new StatisticsScreen( game ) );break;
-		    	            	case 4 : System.exit(0);break;
+		    	            	case 4 :
+                                    String appName = "Уголки";
+                                    try {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
+                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+                                    }
+                                    break;
+		    	            	case 5 : System.exit(0);break;
 		            		}
     	            	}
 	

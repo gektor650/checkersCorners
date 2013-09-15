@@ -65,7 +65,12 @@ public class StatisticsScreen extends Screen {
             if( i < statisticsData.size() ) {
                 turnsCnt    = String.valueOf( statisticsData.get(i).turnsCnt );
                 gameTime    = String.valueOf( statisticsData.get(i).gameTime );
-                gameLevel   = String.valueOf( statisticsData.get(i).gameLevel );
+                if(  statisticsData.get(i).gameLevel == 0 )
+                    gameLevel   = "easy";
+                else if(  statisticsData.get(i).gameLevel == 1 )
+                    gameLevel = "medium";
+                else
+                    gameLevel = "hard";
                 checker.setColor( statisticsData.get(i).figureColor );
                 checkerImage = game.getGraphics().newPixmap( checker.getImage() , Graphics.PixmapFormat.ARGB8888 ); checker.getImage();
 

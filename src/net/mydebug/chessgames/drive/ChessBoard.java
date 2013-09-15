@@ -26,6 +26,7 @@ public abstract class ChessBoard  {
 	protected Game      game;
 	protected Timer     timer;
     protected Statistic statistic;
+    protected Settings  settings;
 
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
@@ -38,14 +39,13 @@ public abstract class ChessBoard  {
 	private final float RAW_BODY_PADDING  = 20;
 	private final float RAW_BODY_FIELD    = 100;
 	public final static int CHESSBOARD_FIELDS_COUNT = 8;
-	public static int BOARD_SHOW_TIPS = 1;
-	private int WHOSE_TURN = Figure.WHITE;
+	private int whoseTurn = Figure.WHITE;
 
 	public static final int ONE_PLAYER = 0;
     public static final int TWO_PLAYERS = 1;
 
-    protected final int PLAYER_COLOR = Figure.WHITE;
-	protected final int AI_COLOR     = Figure.BLACK;
+    protected int playerColor  = Figure.WHITE;
+	protected int aiColor      = Figure.BLACK;
 
     protected boolean gameOver = false;
 
@@ -71,8 +71,21 @@ public abstract class ChessBoard  {
 	protected int activeFigure = -1;
 
     private float gameTime = 0;
+    private boolean boardTips = true;
 	
 	public ChessBoard(Game game , boolean isNew) {
+        settings = new Settings( game.getActivity().getBaseContext().getFilesDir().toString() );
+
+        gameMode  = settings.getSettings().gameMode;
+        boardTips = settings.getSettings().showTips;
+        if( settings.getSettings().playerColor == Figure.BLACK )    {
+            aiColor   = Figure.WHITE ;
+            playerColor = Figure.BLACK;
+        }
+        else  {
+            aiColor   = Figure.BLACK;
+            playerColor = Figure.WHITE;
+        }
     	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
         this.game = game;
 
@@ -180,7 +193,8 @@ public abstract class ChessBoard  {
         game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
         game.getGraphics().drawText( text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 + 10 , 20, 0xffff0000);
         drawBottomMenu();
-        statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
+        if( gameMode == ChessBoard.ONE_PLAYER )
+            statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
         this.clearTimer();
 		history.clear();
     }
@@ -192,7 +206,7 @@ public abstract class ChessBoard  {
 			clearTips();
     		setFiguresByFiguresData( figureDatas );
     		setFiguresOnBoard();
-    		this.WHOSE_TURN = history.lastWhosTurn();
+    		this.whoseTurn = history.lastWhosTurn();
             this.gameTime   = history.lastGameTime();
         }
 		draw();	
@@ -210,20 +224,20 @@ public abstract class ChessBoard  {
 		if( figureDatas != null ) {
 			setFiguresByFiguresData( figureDatas );
 			setFiguresOnBoard();
-    		this.WHOSE_TURN = history.lastWhosTurn();
+    		this.whoseTurn = history.lastWhosTurn();
             this.gameTime   = history.lastGameTime();
         }
 	}
     
     public int getTurn() {
-    	return WHOSE_TURN;
+    	return whoseTurn;
     }
     
     public void nextTurn() {
-    	if( WHOSE_TURN == Figure.WHITE ) {
-    		WHOSE_TURN = Figure.BLACK;
+    	if( whoseTurn == Figure.WHITE ) {
+    		whoseTurn = Figure.BLACK;
     	} else {
-    		WHOSE_TURN = Figure.WHITE;
+    		whoseTurn = Figure.WHITE;
     	}
     }
     
@@ -243,7 +257,7 @@ public abstract class ChessBoard  {
 		activeFigure = -1;
 		nextTurn();
 		if( this.gameMode == this.ONE_PLAYER ) {
-    		if( WHOSE_TURN != PLAYER_COLOR ) {
+    		if( whoseTurn != playerColor ) {
     			AiModel.move();
     		} else {
 	    		history.save( this );    		
@@ -309,7 +323,7 @@ public abstract class ChessBoard  {
 
 
 	private void drawTips() {
-		if( BOARD_SHOW_TIPS == 1 ) {
+		if( boardTips ) {
 			// Подсвечиваем поля возможного хода
 
 			for( int i = 0 ; i < tips.size() ; i++ ) {
@@ -405,10 +419,14 @@ public abstract class ChessBoard  {
     }
     
     protected void drawInfo() {
-		game.getGraphics().drawText( "Moves сount: " + String.valueOf( history.getTurnId() )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
+        int turnId = history.getTurnId();
+        if( gameMode == ChessBoard.TWO_PLAYERS ) {
+            turnId = turnId / 2 ;
+        }
+		game.getGraphics().drawText( "Moves сount: " + String.valueOf( turnId )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
 		game.getGraphics().drawText( " - move "  ,  30 , 20 , 20 , 0xff000000 , Paint.Align.LEFT );
 		Pixmap pixmap;
-		if( WHOSE_TURN == 0 ) 
+		if( whoseTurn == 0 )
 			pixmap = game.getGraphics().newPixmap( "checkerBlack1.png" , PixmapFormat.RGB565 );
 		else
 			pixmap = game.getGraphics().newPixmap( "checkerWhite1.png" , PixmapFormat.RGB565 );
@@ -477,7 +495,11 @@ public abstract class ChessBoard  {
     }
 
     public int getPlayerColor() {
-        return this.PLAYER_COLOR;
+        return this.playerColor;
+    }
+
+    public Settings getSettings() {
+        return settings;
     }
 	
     protected abstract void initializeFigures();

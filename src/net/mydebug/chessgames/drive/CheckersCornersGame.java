@@ -19,9 +19,13 @@ public class CheckersCornersGame extends ChessBoard {
 
 	public CheckersCornersGame( Game game , boolean newGame ) {
 		super(game , newGame );
-		if( gameMode == ONE_PLAYER )
-			AiModel = new CheckersCornersAi( AI_COLOR , (ChessBoard) this );
-	}
+        if( gameMode == ONE_PLAYER ) {
+            AiModel = new CheckersCornersAi( aiColor , (ChessBoard) this );
+            if( playerColor == Figure.BLACK )
+                AiModel.move();
+        }
+
+    }
 
 	
 	

@@ -2,6 +2,7 @@ package net.mydebug.chessgames.drive.figures;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.util.Log;
 
@@ -12,11 +13,13 @@ public class CheckersCornersAi implements Ai {
 	int [][] priorities;
 	ChessBoard board;
 	int color;
+    int level = 0;
 	
 	public CheckersCornersAi( int color , ChessBoard board ) {
 		this.board = board;
 		this.color = color;
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
+        level = board.getSettings().getSettings().gameLevel;
 		if( color == Figure.WHITE ) {
 			priorities[0] = new int[]{ 1  , 22  , 23  , 24, 25, 26, 27, 28 };
             priorities[1] = new int[]{22  , 24  , 26  , 28, 30, 32, 34, 36 };
@@ -32,7 +35,7 @@ public class CheckersCornersAi implements Ai {
 			priorities[1] = new int[]{1056, 1049, 1042, 45, 42, 41, 36, 27 };
 			priorities[2] = new int[]{1048, 1042, 1036, 46, 41, 38, 34, 26 };
 			priorities[3] = new int[]{1040, 1035, 1030, 47, 40, 39, 32, 28 };
-			priorities[4] = new int[]{42  , 44  , 46  , 48, 39, 38, 30, 26 };
+			priorities[4] = new int[]{42  , 44  , 47  , 48, 39, 38, 30, 26 };
 			priorities[5] = new int[]{38  , 40  , 42  , 40, 36, 32, 28, 24 };
 			priorities[6] = new int[]{36  , 34  , 32  , 30, 28, 26, 24, 22 };
 			priorities[7] = new int[]{28  , 27  , 26  , 25, 24, 23, 22,  1 };
@@ -60,19 +63,47 @@ public class CheckersCornersAi implements Ai {
 		int tmp;
 		FigureAndPosition result = new FigureAndPosition();
 		List positions = new ArrayList<Position>();
-		for( int i = 0 ; i < figures.size() ; i++ ) {
-			if( figures.get(i).getColor() != color ) continue;
-			positions  = figures.get(i).getAviableMoves();
-			currWeight = positionToFieldWeight( figures.get(i).getPosition() );
-			for( int j = 0 ; j < positions.size() ; j++ ) {
-				tmp = positionToFieldWeight( (Position) positions.get( j ) ) - currWeight;
-				if( tmp > bestResult ) {
-					bestResult = tmp;
-					result.figureIndex = i;
-					result.position = (Position) positions.get( j );
-				}
-			}
-		}
+        if( level == 2 ) {
+            for( int i = 0 ; i < figures.size() ; i++ ) {
+                if( figures.get(i).getColor() != color ) continue;
+                positions  = figures.get(i).getAviableMoves();
+                currWeight = positionToFieldWeight( figures.get(i).getPosition() );
+                for( int j = 0 ; j < positions.size() ; j++ ) {
+                    tmp = positionToFieldWeight( (Position) positions.get( j ) ) - currWeight;
+                    if( tmp > bestResult ) {
+                        bestResult = tmp;
+                        result.figureIndex = i;
+                        result.position    = (Position) positions.get( j );
+                    }
+                }
+            }
+        } else if( level == 1 ) {
+            Random rand = new Random();
+            for( int i = 0 ; i < figures.size() ; i++ ) {
+                if( figures.get(i).getColor() != color ) continue;
+                positions  = figures.get(i).getAviableMoves();
+                int index   = rand.nextInt( positions.size() - 1 );
+                if( index > 0 ) {
+                    result.figureIndex = i;
+                    result.position    = (Position) positions.get( index );
+                }
+            }
+        } else {
+            Random rand = new Random();
+            for( int i = 0 ; i < figures.size() ; i++ ) {
+                if( figures.get(i).getColor() != color ) continue;
+                positions  = figures.get(i).getAviableMoves();
+                if( positions.size() - 1 <= 0 ) continue;
+                int index   = rand.nextInt( positions.size() - 1 );
+
+                if( positions.size() - 1 <= 0 ) continue;
+                if( index > 0 ) {
+                    result.figureIndex = i;
+                    result.position    = (Position) positions.get( index );
+                }
+            }
+        }
+
 		return result;
 	}
 	

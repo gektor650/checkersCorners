@@ -28,7 +28,7 @@ public class StatisticProviderMetaData {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mydebug.statistic";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mydebug.statistic";
 
-        public static final String DEFAULT_SORT_ORDER = "turns_cnt DESC";
+        public static final String DEFAULT_SORT_ORDER = "turns_cnt ASC, game_time ASC";
 
         //Additional Columns start here.
         //string type
