@@ -100,7 +100,7 @@ public class CheckersCornersAi implements Ai {
             int randIndex    = rand.nextInt( figures.size() / 2 );
             int aiFiguresCnt = 0;
             FIGURES : for( int i = 0 ; i < figures.size() ; i++ ) {
-                if( figures.get(i).getColor() != color ) continue;
+                if( figures.get( i ).getColor() != color ) continue;
                 aiFiguresCnt++;
                 positions  = figures.get(i).getAviableMoves();
                 if( positions.size() < 1 ) continue;
@@ -108,7 +108,7 @@ public class CheckersCornersAi implements Ai {
                 for (Object position : positions) {
                     tmp = positionToFieldWeight((Position) position) - currWeight;
                     result.figureIndex = i;
-                    result.position = (Position) position;
+                    result.position    = (Position) position;
                     if ( tmp > 0 && randIndex < aiFiguresCnt ) {
                         break FIGURES;
                     }
