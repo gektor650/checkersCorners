@@ -60,11 +60,11 @@ public class SettingsScreen extends Screen {
         image = game.getGraphics().newPixmap("playerColor.png", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( image, paddingX, 40 + paddingY * 2 );
         if( settings.getSettings().playerColor == Figure.WHITE ) {
-            image = game.getGraphics().newPixmap("white.png", Graphics.PixmapFormat.ARGB8888 );
-            game.getGraphics().drawPixmap( image, paddingX, 60 + paddingY * 2 );
+            image = game.getGraphics().newPixmap( "checkerWhite1.png" , Graphics.PixmapFormat.ARGB8888 );
+            game.getGraphics().drawPixmap( image, game.getGraphics().getWidth() / 2 - 10 , 80 + paddingY * 2 , 20 , 20 );
         } else {
-            image = game.getGraphics().newPixmap("black.png", Graphics.PixmapFormat.ARGB8888 );
-            game.getGraphics().drawPixmap( image, paddingX, 60 + paddingY * 2 );
+            image = game.getGraphics().newPixmap("checkerBlack1.png", Graphics.PixmapFormat.ARGB8888 );
+            game.getGraphics().drawPixmap( image, game.getGraphics().getWidth() / 2 - 10 , 80 + paddingY * 2 , 20 , 20  );
         }
 
         image = game.getGraphics().newPixmap("gameLevel.png", Graphics.PixmapFormat.ARGB8888 );

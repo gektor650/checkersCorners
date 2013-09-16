@@ -77,7 +77,7 @@ public class CheckersCornersAi implements Ai {
                     }
                 }
             }
-        } else if( level == 1 ) {
+        } else if( level == 11 ) {
             Random rand = new Random();
             for( int i = 0 ; i < figures.size() ; i++ ) {
                 if( figures.get(i).getColor() != color ) continue;
@@ -90,14 +90,15 @@ public class CheckersCornersAi implements Ai {
             }
         } else {
             Random rand = new Random();
+            List<FigureAndPosition> movesList = new ArrayList<FigureAndPosition>();
             for( int i = 0 ; i < figures.size() ; i++ ) {
                 if( figures.get(i).getColor() != color ) continue;
                 positions  = figures.get(i).getAviableMoves();
-                if( positions.size() - 1 <= 0 ) continue;
+                if( positions.size() < 1 ) continue;
                 int index   = rand.nextInt( positions.size() - 1 );
-                if( index > 0 ) {
-                    result.figureIndex = i;
-                    result.position    = (Position) positions.get( index );
+                currWeight  = positionToFieldWeight( figures.get(i).getPosition() );
+                for( int j = 0 ; j < positions.size() ; j++ ) {
+                    tmp         = positionToFieldWeight( (Position) positions.get( j ) ) - currWeight;
                 }
             }
         }
