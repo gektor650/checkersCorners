@@ -189,10 +189,12 @@ public abstract class ChessBoard  {
 		} else if( winner == Figure.BLACK ){
 			text = "Black wins!";
 		}
-        game.getGraphics().drawRect( 0 , 0 , game.getGraphics().getWidth() , game.getGraphics().getHeight() - 32 , 0x99cccccc);
+        game.getGraphics().drawRect(0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() - 32, 0x99cccccc);
         game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
-        game.getGraphics().drawText( text , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 + 10 , 20, 0xffff0000);
+        game.getGraphics().drawText(text, game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2 + 10, 20, 0xffff0000);
+        this.drawInfo();
         drawBottomMenu();
+        drawGameTime();
         if( gameMode == ChessBoard.ONE_PLAYER )
             statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
         this.clearTimer();
@@ -326,16 +328,16 @@ public abstract class ChessBoard  {
 		if( boardTips ) {
 			// Подсвечиваем поля возможного хода
 
-			for( int i = 0 ; i < tips.size() ; i++ ) {
-				highlightField( tips.get(i) , 0xcc00cc00 );	
-				highlightFieldBorder( tips.get(i) ,0xff00ff00);
-			}
+            for (Position tip : tips) {
+                highlightField(tip, 0xcc00cc00);
+                highlightFieldBorder(tip, 0xff00ff00);
+            }
             Graph graph = new Graph( tipsLines );
             graph.getShortestRoute();
 			// Рисуем линии, которые подсказывают траэкторию возможного хода
-			for( int i = 0 ; i < tipsLines.size() ; i++ ) {		
-				game.getGraphics().drawLine( (int) (getXPixel( tipsLines.get(i).position1.x) + fieldHeight / 2  ), (int) (getYPixel( tipsLines.get(i).position1.y )  + fieldHeight / 2), (int)( getXPixel( tipsLines.get(i).position2.x ) + fieldHeight / 2 ), (int) (getYPixel( tipsLines.get(i).position2.y ) + fieldHeight / 2 ), 0xff00ff00 , 2 );
-			}
+            for (MoveLine tipsLine : tipsLines) {
+                game.getGraphics().drawLine((int) (getXPixel(tipsLine.position1.x) + fieldHeight / 2), (int) (getYPixel(tipsLine.position1.y) + fieldHeight / 2), (int) (getXPixel(tipsLine.position2.x) + fieldHeight / 2), (int) (getYPixel(tipsLine.position2.y) + fieldHeight / 2), 0xff00ff00, 2);
+            }
 
 		}
 	}
