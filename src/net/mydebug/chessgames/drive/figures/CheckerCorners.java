@@ -3,19 +3,16 @@ package net.mydebug.chessgames.drive.figures;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 import net.mydebug.chessgames.drive.ChessBoard;
-
 
 public class CheckerCorners extends Checker {
 
-	private List<Position>turns;
-	ArrayList<Position> posiblePositions = new ArrayList<Position>();
-	ArrayList<MoveDirection> posibleDirections = new ArrayList<MoveDirection>();
-	ArrayList<MoveLine> posibleMovesLines = new ArrayList<MoveLine>();
-	MoveLine tmpMoveLineFullField;
-	ArrayList<Position> alreadyChecked    = new ArrayList<Position>();
+	private List<Position>   turns;
+	ArrayList<Position>      possiblePositions    = new ArrayList<Position>();
+	ArrayList<MoveDirection> possibleDirections   = new ArrayList<MoveDirection>();
+	ArrayList<MoveLine>      possibleMovesLines   = new ArrayList<MoveLine>();
+    ArrayList<Position>      alreadyChecked       = new ArrayList<Position>();
+    MoveLine                 tmpMoveLineFullField;
 
 
 	public CheckerCorners(  ) {
@@ -50,21 +47,21 @@ public class CheckerCorners extends Checker {
 
 		// Проверка предотвращающая закольцованность ходов. 
 		// Если ход еще не проверяли - добавляем в список
-		for( int j = 0 ; j < alreadyChecked.size()  ; j++ ) {
-			if( position.x == alreadyChecked.get(j).x && position.y  == alreadyChecked.get(j).y ) {
-				return;
-			}
-		}
+        for (Position anAlreadyChecked : alreadyChecked) {
+            if (position.x == anAlreadyChecked.x && position.y == anAlreadyChecked.y) {
+                return;
+            }
+        }
 		alreadyChecked.add( position );
 		// Если поле свободно - добавляем его в возможные ходы и проверяем 3 направления (на возможность шагнуть еще через какую-то фигуру
 		if( empty == 1 ) {
 			
-			posiblePositions.add( position );
-			posibleDirections.add( direction );		
+			possiblePositions.add( position );
+			possibleDirections.add( direction );
 			if( tmpMoveLineFullField != null ) 
-				posibleMovesLines.add( tmpMoveLineFullField );
+				possibleMovesLines.add( tmpMoveLineFullField );
             tmpMoveLineFullField = null;
-			posibleMovesLines.add( new MoveLine( tmpX , tmpY , position.x , position.y ) );
+			possibleMovesLines.add( new MoveLine( tmpX , tmpY , position.x , position.y ) );
 			List<Position> directPos = new ArrayList<Position>();
 			List<MoveDirection> directions = new ArrayList<MoveDirection>();
 			
@@ -113,47 +110,47 @@ public class CheckerCorners extends Checker {
 
 	@Override
 	public List<Position> getAviableMoves() {
-		posiblePositions = new ArrayList<Position>();
-		posibleDirections = new ArrayList<MoveDirection>();
-		posibleMovesLines = new ArrayList<MoveLine>();
-		alreadyChecked    = new ArrayList<Position>();
+		possiblePositions  = new ArrayList<Position>();
+		possibleDirections = new ArrayList<MoveDirection>();
+		possibleMovesLines = new ArrayList<MoveLine>();
+		alreadyChecked     = new ArrayList<Position>();
 
 		generateTurnsByPosition( getPosition() );
 		alreadyChecked.add( new Position( this.x, this.y ) );
-		for( int i = 0 ; i < turns.size() ; i++ ) {
-			int isEmpty = ChessBoard.checkFieldIsEmpty( turns.get(i) );
-			//если в поле пусто добавляем возможность хода
-			if( isEmpty == 1 ) {
-				posiblePositions.add( turns.get(i) );
-				posibleDirections.add( null );
-				posibleMovesLines.add( new MoveLine( this.x, this.y, turns.get(i).x, turns.get(i).y ) );
-			// проверяем можем ли мы перешагнуть через занятую клетку
-			} else if( isEmpty == 0 ) {
-				int direction;
-				int value;
-				//определяем направление, по которому надо проверить возможные ходы
-				// tmpMoveLineFullField - темповая переменная, в которая траэкторию прохода пропускаемого поля
-				if( turns.get(i).x == this.x ) {
-					value = -(this.y - turns.get(i).y); 
-					direction = DIRECTION_Y;
-					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x , turns.get(i).y );
-				} else {
-					value = -(this.x - turns.get(i).x) ;
-					direction = DIRECTION_X;
-					tmpMoveLineFullField = new MoveLine( this.x, this.y, turns.get(i).x , turns.get(i).y  );
-				}
-				// рекурсивно проверяем можем ли мы перешагнуть через занятую клетку
-				checkTurnNextLevel(  turns.get(i) , new MoveDirection(direction, value) );
-			}
-		}
-		return posiblePositions;
+        for (Position turn : turns) {
+            int isEmpty = ChessBoard.checkFieldIsEmpty(turn);
+            //если в поле пусто добавляем возможность хода
+            if (isEmpty == 1) {
+                possiblePositions.add(turn);
+                possibleDirections.add(null);
+                possibleMovesLines.add(new MoveLine(this.x, this.y, turn.x, turn.y));
+                // проверяем можем ли мы перешагнуть через занятую клетку
+            } else if (isEmpty == 0) {
+                int direction;
+                int value;
+                //определяем направление, по которому надо проверить возможные ходы
+                // tmpMoveLineFullField - темповая переменная, в которая траэкторию прохода пропускаемого поля
+                if (turn.x == this.x) {
+                    value = -(this.y - turn.y);
+                    direction = DIRECTION_Y;
+                    tmpMoveLineFullField = new MoveLine(this.x, this.y, turn.x, turn.y);
+                } else {
+                    value = -(this.x - turn.x);
+                    direction = DIRECTION_X;
+                    tmpMoveLineFullField = new MoveLine(this.x, this.y, turn.x, turn.y);
+                }
+                // рекурсивно проверяем можем ли мы перешагнуть через занятую клетку
+                checkTurnNextLevel(turn, new MoveDirection(direction, value));
+            }
+        }
+		return possiblePositions;
 	}
 
 	@Override
 	public ArrayList<MoveLine> getAviableDirectionsLines() {
 		
 		
-		return posibleMovesLines;
+		return possibleMovesLines;
 	}
 
 	

@@ -9,8 +9,8 @@ import net.mydebug.chessgames.drive.figures.FigureData;
 public interface HistoryInterface {
 	public void save(ChessBoard board);
 	public int getTurnId();
-	public ArrayList<FigureData> back();
-	public ArrayList<FigureData> loadLastTurn();
+	public ArrayList back();
+	public ArrayList loadLastTurn();
 	public int lastWhosTurn();
 	public int lastGameTime();
     public void clear();

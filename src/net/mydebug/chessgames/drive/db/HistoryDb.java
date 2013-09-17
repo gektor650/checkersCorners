@@ -47,7 +47,7 @@ public class HistoryDb
 	public void clearAll() {
 		ContentResolver cr = this.mContext.getContentResolver();
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
-		cr.delete(uri, null, null);		
+		cr.delete(uri, null, null);
 	}
 	
 	/**
@@ -65,25 +65,29 @@ public class HistoryDb
 	
 	
 	/** Достаем из таблицы запись состояния фигур на поле (массив из FigureData)
-	 * @param gameId 
-	 * @param turnId
+	 * @param gameId - game ID - всегда 0
+	 * @param turnId - ID хода
 	 * @return сериализированный ArrayList<FigureData>
 	 */
 	public byte[] getTurn( int gameId , int turnId ) {
 		Uri uri = HistoryProviderMetaData.HistoryTableMetaData.CONTENT_URI;
 		Activity a = (Activity)this.mContext;
 		Cursor c = a.getContentResolver().query(uri, null, "turn_id = " + turnId + " and game_id = " + gameId , null, null);
-		byte[] dataDb = null;
-		int dataId = c.getColumnIndex(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_DATA);
-		c.moveToFirst();
-		dataDb = c.getBlob(dataId);
-		c.close();
-		return dataDb;
+        if( c.getCount() > 0 ) {
+            int dataId = c.getColumnIndex(HistoryProviderMetaData.HistoryTableMetaData.HISTORY_GAME_DATA);
+            c.moveToFirst();
+            byte[] dataDb = c.getBlob(dataId);
+            c.close();
+            return dataDb;
+        } else {
+            return null;
+        }
+
 	}
 
 	
 	/**
-	 * @param gameId
+	 * @param gameId - айди игры - всегда 0
 	 * @return max turnId by gameId
 	 */
 	public int getLastTurnId( int gameId ) {

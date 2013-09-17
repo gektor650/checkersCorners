@@ -5,9 +5,7 @@ import java.util.List;
 
 
 import android.app.Activity;
-import android.util.Log;
 
-import com.badlogic.androidgames.framework.Game;
 import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
 import net.mydebug.chessgames.drive.db.HistoryDb;
@@ -18,7 +16,7 @@ import net.mydebug.chessgames.drive.db.HistoryDb;
  */
 public class History implements HistoryInterface {
 	List<Figure> figures = new ArrayList<Figure>();
-	int 		  turnId = 0;
+	int 		  turnId = -1;
 	int 	      gameId = 1;
 	HistoryDb historyDb;
 	
@@ -35,11 +33,12 @@ public class History implements HistoryInterface {
 	public void save( ChessBoard board ) {
 		figures = board.getFigures();
 		ArrayList<FigureData> data = new ArrayList<FigureData>();
-		for( int i = 0 ; i < figures.size() ; i++ ) {
-			data.add( new FigureData( figures.get(i).getX(), figures.get(i).getY(), figures.get(i).getColor(), figures.get(i).getType() ) );
-		}
+        for (Figure figure : figures) {
+            data.add(new FigureData(figure.getX(), figure.getY(), figure.getColor(), figure.getType()));
+        }
+        System.out.println("turnId : " + turnId);
 
-		byte[] savedData = Serialize.serialize( data );
+        byte[] savedData = Serialize.serialize( data );
 
 		historyDb.addTurn( gameId, ++turnId, savedData , board.getTurn() , (int)board.getGameTime() );
 	}
@@ -47,17 +46,17 @@ public class History implements HistoryInterface {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<FigureData> back( ) {
-		if( turnId <= 1 ) return null; 
+        if( turnId < 1 ) return null;
 		historyDb.removeLastTurn();
 		@SuppressWarnings("unchecked")
 		ArrayList<FigureData>  data = (ArrayList)Serialize.deserialize( historyDb.getTurn( gameId , --turnId ) );
-		return data;
+        return data;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<FigureData> loadLastTurn( ) {
-		if( turnId <= 1 ) return null; 
+		if( turnId <= 1 ) return null;
 		@SuppressWarnings("unchecked")
 		ArrayList<FigureData>  data = (ArrayList)Serialize.deserialize( historyDb.getTurn( gameId , turnId ) );
 		return data;
@@ -65,7 +64,7 @@ public class History implements HistoryInterface {
 
 	@Override
 	public int lastWhosTurn( ) {
-		int whosTurn = 0;
+		int whosTurn;
 		whosTurn = historyDb.getLastWhosTurn( gameId , turnId );
 		return whosTurn;
 	}
@@ -73,7 +72,7 @@ public class History implements HistoryInterface {
 
 	@Override
 	public int lastGameTime( ) {
-		int gameTime = 0;
+		int gameTime;
         gameTime = historyDb.getLastGameTime(gameId, turnId);
         return gameTime;
 	}
@@ -84,6 +83,10 @@ public class History implements HistoryInterface {
 	public int getTurnId() {
 		return turnId;
 	}
+
+    public void setTurnId( int id ) {
+        turnId = id;
+    }
 
     @Override
     public void clear() {

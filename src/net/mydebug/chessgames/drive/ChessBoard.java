@@ -74,45 +74,54 @@ public abstract class ChessBoard  {
     private boolean boardTips = true;
 	
 	public ChessBoard(Game game , boolean isNew) {
-        settings = new Settings( game.getActivity().getBaseContext().getFilesDir().toString() );
+        this.game = game;
+        settings  = new Settings ( game.getActivity().getBaseContext().getFilesDir().toString() );
+        history   = new History  ( game.getActivity() , isNew );
+        statistic = new Statistic( game.getActivity() );
 
-        gameMode  = settings.getSettings().gameMode;
-        boardTips = settings.getSettings().showTips;
-        if( settings.getSettings().playerColor == Figure.BLACK )    {
-            aiColor   = Figure.WHITE ;
+        gameMode  = settings.getGameMode();
+        boardTips = settings.getShowTips();
+        gameLevel = settings.getGameLevel();
+
+        if( settings.getPlayerColor() == Figure.BLACK )    {
+            aiColor     = Figure.WHITE ;
             playerColor = Figure.BLACK;
         }
         else  {
-            aiColor   = Figure.BLACK;
+            aiColor     = Figure.BLACK;
             playerColor = Figure.WHITE;
         }
     	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
-        this.game = game;
 
         activeFigure = -1;
-      	boardWidth = game.getGraphics().getWidth();
-    	paddingY   = ( game.getGraphics().getHeight() - boardWidth ) / 2; 
-        
-        coefficient = boardWidth / RAW_BODY_SIZE ;
-        fieldWidth  = RAW_BODY_FIELD * coefficient;
+      	boardWidth   = game.getGraphics().getWidth();
+    	paddingY     = ( game.getGraphics().getHeight() - boardWidth ) / 2;
+        coefficient  = boardWidth / RAW_BODY_SIZE ;
+        fieldWidth   = RAW_BODY_FIELD * coefficient;
+
         float startPointX  = RAW_BODY_PADDING * coefficient;
         float startPointY  = RAW_BODY_PADDING * coefficient + paddingY;
+
         for(int i = 0 ; i < pixelToPositionX.length ; i++) {
         	pixelToPositionX[i] = startPointX;
         	startPointX += fieldWidth;
         	pixelToPositionY[i] = startPointY;
         	startPointY += fieldWidth;
          }
+
         fieldHeight = fieldWidth;
         boardHeight = boardWidth;
         figureWidth = figureHeight = fieldWidth * 0.8f;
         figurePadding = fieldWidth * 0.1f;
-    	history   = new History( game.getActivity() , isNew );
-        statistic = new Statistic( game.getActivity() );
+
+        // Если игра новая - инициализируем поле заново, иначе загружаем прошлую игру
         if( isNew ) {
-            this.initializeFigures();
-            this.setFiguresOnBoard();
-    		history.save(this);
+            initializeFigures();
+            setFiguresOnBoard();
+            // Запоминаем изначальное расположение фигур, если пользователь ходит первым
+            // если первым ходит AI - запоминаем после хода
+            if( playerColor == Figure.WHITE || gameMode == TWO_PLAYERS )
+                history.save(this);
         } else {
         	this.loadGameFromHistory();
 			if( isGameOver() != -1 ) {
@@ -120,6 +129,7 @@ public abstract class ChessBoard  {
 			}
         }
 
+        // Запускаем таймер времени игры
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -138,7 +148,8 @@ public abstract class ChessBoard  {
     	// Если нажали на шахматную доску
     	if( y > paddingY && y < game.getGraphics().getHeight() - paddingY ) {
             if( gameOver ) return;
-        	// устанавливаем значение поля выходящее за пределы, потом будем проверять если поле от 0 до 7 - значит кликнули на клетку
+        	// устанавливаем значение поля выходящее за пределы, потом будем проверять,
+        	// если поле от 0 до 7 - значит кликнули на клетку
         	int fieldX = 99;
         	int fieldY = 99;
         	int i;
@@ -195,7 +206,7 @@ public abstract class ChessBoard  {
         this.drawInfo();
         drawBottomMenu();
         drawGameTime();
-        if( gameMode == ChessBoard.ONE_PLAYER )
+        if( gameMode == ChessBoard.ONE_PLAYER && winner == playerColor )
             statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
         this.clearTimer();
 		history.clear();
@@ -204,12 +215,15 @@ public abstract class ChessBoard  {
     
     public void loadPrevFromHistory() {
 		ArrayList<FigureData> figureDatas = history.back( );
-		if( figureDatas != null ) {
-			clearTips();
+        if( figureDatas != null ) {
+            clearTips();
     		setFiguresByFiguresData( figureDatas );
     		setFiguresOnBoard();
     		this.whoseTurn = history.lastWhosTurn();
             this.gameTime   = history.lastGameTime();
+            if( playerColor == Figure.BLACK && whoseTurn == Figure.WHITE && gameMode == ONE_PLAYER && history.getTurnId() > 0 ) {
+                AiModel.move();
+            }
         }
 		draw();	
     }
@@ -258,14 +272,14 @@ public abstract class ChessBoard  {
 		tipsLines = new ArrayList<MoveLine>();
 		activeFigure = -1;
 		nextTurn();
-		if( this.gameMode == this.ONE_PLAYER ) {
+		if( this.gameMode == ONE_PLAYER ) {
     		if( whoseTurn != playerColor ) {
     			AiModel.move();
-    		} else {
-	    		history.save( this );    		
+            } else {
+                history.save( this );
     		}
 		} else {
-    		history.save( this );    		
+            history.save( this );
     	}
     }
 
@@ -444,7 +458,7 @@ public abstract class ChessBoard  {
 
         game.getGraphics().drawPixmap( pixmap  , 0 , 0 , boardWidth , 30 );
         pixmap.dispose();
-        if( history.getTurnId() > 1 && ! gameOver ) {
+        if( history.getTurnId() > 0 && ! gameOver ) {
         	pixmap = game.getGraphics().newPixmap( "go-back-icon-32.png" , PixmapFormat.RGB565 );
     		game.getGraphics().drawPixmap( pixmap  , 0 , game.getGraphics().getHeight() - 32 );
             pixmap.dispose();

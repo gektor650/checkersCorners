@@ -21,8 +21,9 @@ public class CheckersCornersGame extends ChessBoard {
 		super(game , newGame );
         if( gameMode == ONE_PLAYER ) {
             AiModel = new CheckersCornersAi( aiColor , (ChessBoard) this );
-            if( playerColor == Figure.BLACK )
+            if( playerColor == Figure.BLACK ) {
                 AiModel.move();
+            }
         }
 
     }
@@ -35,10 +36,10 @@ public class CheckersCornersGame extends ChessBoard {
 		if( activeFigure > -1 ) {
 			if( this.checkFieldIsEmpty( new Position( x , y )  ) == 1
 					&& getTurn() == figures.get( activeFigure ).getColor() ) {
-				for(int i = 0 ; i < tips.size(); i ++ )
-					if( tips.get(i).x == x && tips.get(i).y == y ) {
-						move( activeFigure  , new Position( x , y ) );
-					}
+                for (Position tip : tips)
+                    if (tip.x == x && tip.y == y) {
+                        move(activeFigure, new Position(x, y));
+                    }
 			}
 			tips      = new ArrayList<Position>();
 			tipsLines = new ArrayList<MoveLine>();

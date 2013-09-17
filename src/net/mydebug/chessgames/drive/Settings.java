@@ -4,13 +4,6 @@ import net.mydebug.chessgames.drive.figures.Figure;
 
 import java.io.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: gektor650
- * Date: 12.09.13
- * Time: 1:03
- * To change this template use File | Settings | File Templates.
- */
 public class Settings {
 
 
@@ -58,12 +51,23 @@ public class Settings {
         }catch(ClassNotFoundException c)
         {
             c.printStackTrace();
-            return;
         }
     }
 
-    public SettingsRow getSettings() {
-        return settings;
+    public int getGameMode() {
+        return settings.gameMode;
+    }
+
+    public int getGameLevel() {
+        return settings.gameLevel;
+    }
+
+    public int getPlayerColor() {
+        return settings.playerColor;
+    }
+
+    public boolean getShowTips() {
+        return settings.showTips;
     }
 
     public void changeGameMode() {

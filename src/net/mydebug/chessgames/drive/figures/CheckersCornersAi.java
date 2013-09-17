@@ -19,7 +19,7 @@ public class CheckersCornersAi implements Ai {
 		this.board = board;
 		this.color = color;
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
-        level = board.getSettings().getSettings().gameLevel;
+        level = board.getSettings().getGameLevel();
 		if( color == Figure.WHITE ) {
 			priorities[0] = new int[]{ 1  , 22  , 23  , 24, 25, 26, 27, 28 };
             priorities[1] = new int[]{22  , 24  , 26  , 28, 30, 32, 34, 36 };
@@ -55,8 +55,16 @@ public class CheckersCornersAi implements Ai {
 		int bestResult = -99;
 		int currWeight = 0;
 		int tmp;
-		FigureAndPosition result = new FigureAndPosition();
 		List positions;
+        FigureAndPosition result = new FigureAndPosition();
+        Random rand              = new Random();
+
+        if( level == 1 ) {
+            if( rand.nextInt(1) == 1 ) {
+                level = 2;
+            }
+        }
+
         if( level == 2 ) {
             for( int i = 0 ; i < figures.size() ; i++ ) {
                 if( figures.get(i).getColor() != color ) continue;
@@ -71,32 +79,13 @@ public class CheckersCornersAi implements Ai {
                     }
                 }
             }
-        } else if( level == 1 ) {
-            Random rand      = new Random();
-            int randIndex    = rand.nextInt( figures.size() / 2 );
-            int aiFiguresCnt = 0;
-            FIGURES : for( int i = 0 ; i < figures.size() ; i++ ) {
-                if( figures.get(i).getColor() != color ) continue;
-                aiFiguresCnt++;
-                positions  = figures.get(i).getAviableMoves();
-                if( positions.size() < 1 ) continue;
-                currWeight  = positionToFieldWeight( figures.get(i).getPosition() );
-                for (Object position : positions) {
-                    tmp = positionToFieldWeight((Position) position) - currWeight;
-                    result.figureIndex = i;
-                    result.position = (Position) position;
-                    if ( tmp > 0 && randIndex < aiFiguresCnt ) {
-                        break FIGURES;
-                    }
-                }
-            }
         } else {
             /*
-            Самый слабый уровень AI - перезаписываем результат, случайное количество раз и
+            Самый слабый уровень AI - перезаписываем результат(ход, который сделает AI) случайное количество раз и
             до тех пор, пока не будет найден ход,
-            который продвинет шашку вперед.
+            который продвинет шашку вперед(вес теперешнего расположения меньше
+             чем весом возможного хода).
              */
-            Random rand      = new Random();
             int randIndex    = rand.nextInt( figures.size() / 2 );
             int aiFiguresCnt = 0;
             FIGURES : for( int i = 0 ; i < figures.size() ; i++ ) {
