@@ -45,7 +45,7 @@ public class Graph {
         //Заполняем наш граф нулевыми значениями
         for( i = 0 ; i < graph.length ; i++ ) {
             for( j = 0 ; j < graph.length ; j++ ) {
-                graph[i][j] = 0;
+                graph[i][j] = 9999999;
             }
         }
 
@@ -161,7 +161,7 @@ public class Graph {
         v    = s;
 
         while ( true ) {
-            for ( u = 1 ; u < p ; u++ ) {
+            for ( u = 0 ; u < p ; u++ ) {
                 if( X[u] == 0 && T[u] > ( T[v] + graph[v][u]) ) {
                     T[u] = T[v] + graph[v][u];
                     H[u] = v;
@@ -179,18 +179,19 @@ public class Graph {
                 System.out.println("НЕТ ПУТИ");
                 break;
             } else if( v == t ) {
+                System.out.println("VERTEX:" + v);
                 System.out.println( "Путь найден" );
                 break;
             } else {
-                X[v] = 0;
+                X[v] = 1;
             }
         }
 
         for ( u = 0 ; u < H.length ; u++ ) {
-            System.out.println( "H[" + u + "]: " + H[u] );
+            System.out.println( "H[" + u + "]: " + H[u] + " - gr:" + graphVertex.get(u) );
         }
         for ( u = 0 ; u < T.length ; u++ ) {
-            System.out.println( "T[" + u + "]: " + T[u] );
+            System.out.println( "T[" + u + "]: " + T[u] + " - gr:" + graphVertex.get(u) );
         }
 
     }
