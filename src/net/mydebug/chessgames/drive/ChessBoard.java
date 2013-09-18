@@ -203,8 +203,8 @@ public abstract class ChessBoard  {
         game.getGraphics().drawRect(0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() - 32, 0x99cccccc);
         game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
         game.getGraphics().drawText(text, game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2 + 10, 20, 0xffff0000);
-        this.drawInfo();
         drawBottomMenu();
+        this.drawInfo();
         drawGameTime();
         if( gameMode == ChessBoard.ONE_PLAYER && winner == playerColor )
             statistic.add( history.getTurnId() , (int) this.getGameTime() , this.getGameLevel() , this.getPlayerColor() );
@@ -266,7 +266,17 @@ public abstract class ChessBoard  {
     }
     
     public void move( int figureIndex , Position position) {
-		figures.get( figureIndex ).setPosition( position.x, position.y);
+        // Для графа отправляем точки откуда\куда ход
+        if( whoseTurn == playerColor ) {
+            int x1 = figures.get( figureIndex ).getX();
+            int y1 = figures.get( figureIndex ).getY();
+            int x2 = position.x;
+            int y2 = position.y;
+            Graph graph = new Graph( tipsLines );
+            graph.getShortestRoute( x1 , y1 , x2 , y2 );
+        }
+        //Передвигаем фигуру
+        figures.get( figureIndex ).setPosition( position.x, position.y);
 		setFiguresOnBoard();
 		tips      = new ArrayList<Position>();
 		tipsLines = new ArrayList<MoveLine>();
@@ -346,8 +356,6 @@ public abstract class ChessBoard  {
                 highlightField(tip, 0xcc00cc00);
                 highlightFieldBorder(tip, 0xff00ff00);
             }
-            Graph graph = new Graph( tipsLines );
-            graph.getShortestRoute();
 			// Рисуем линии, которые подсказывают траэкторию возможного хода
             for (MoveLine tipsLine : tipsLines) {
                 game.getGraphics().drawLine((int) (getXPixel(tipsLine.position1.x) + fieldHeight / 2), (int) (getYPixel(tipsLine.position1.y) + fieldHeight / 2), (int) (getXPixel(tipsLine.position2.x) + fieldHeight / 2), (int) (getYPixel(tipsLine.position2.y) + fieldHeight / 2), 0xff00ff00, 2);

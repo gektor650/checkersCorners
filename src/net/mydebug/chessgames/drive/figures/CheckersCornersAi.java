@@ -31,14 +31,21 @@ public class CheckersCornersAi implements Ai {
             priorities[7] = new int[]{28, 36, 40, 42, 44, 1037, 1038, 1040 };
 
 		} else {
-			priorities[0] = new int[]{1040, 1038, 1037, 32, 31, 30, 29, 28 };
-			priorities[1] = new int[]{1038, 1037, 1036, 31, 30, 29, 28, 27 };
-			priorities[2] = new int[]{1037, 1036, 1035, 30, 29, 28, 27, 26 };
-			priorities[3] = new int[]{1036, 1035, 1034, 29, 28, 27, 26, 25 };
-			priorities[4] = new int[]{31  , 30  , 29  , 28, 27, 26, 25, 24 };
-			priorities[5] = new int[]{30  , 29  , 28  , 27, 26, 25, 24, 23 };
-			priorities[6] = new int[]{29  , 28  , 27  , 26, 25, 24, 23, 22 };
-			priorities[7] = new int[]{28  , 27  , 26  , 25, 24, 23, 22,  1 };
+			priorities[0] = new int[]{1039, 1038, 1037, 36, 35, 33, 32, 29 };
+
+			priorities[1] = new int[]{1038, 1037, 1036, 37, 35, 33, 32, 28 };
+
+			priorities[2] = new int[]{1037, 1036, 1035, 39, 36, 34, 31, 27 };
+
+			priorities[3] = new int[]{1036, 1035, 1034, 38, 37, 33, 29, 26 };
+
+			priorities[4] = new int[]{35  , 39  , 38  , 36, 33, 30, 27, 24 };
+
+			priorities[5] = new int[]{34  , 35  , 34  , 32, 30, 28, 26, 23 };
+
+			priorities[6] = new int[]{32  , 33  , 31  , 29, 27, 26, 24, 22 };
+
+			priorities[7] = new int[]{31  , 31  , 29  , 27, 25, 23, 22,  1 };
 			
 		}
 	}

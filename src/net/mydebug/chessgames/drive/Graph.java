@@ -11,36 +11,36 @@ public class Graph {
 
     public int[][] graph;
     List<MoveLine> lines;
+    List<Integer> graphVertex = new ArrayList<Integer>();
 
     public Graph( List<MoveLine> lines ) {
-        if( true ) return;
         this.lines = lines;
-        if( lines.size() < 2 ) {
+        if( lines.size() < 1 ) {
             return;
         }
 
         int i,j,k,l;
 
-        List<Integer> graphCnt = new ArrayList<Integer>();
 
         //Определяем для каждой связи номер поля на шахматной доске ( считаем что на доске 64 поля)
         int[] iToFieldNumberBeg = new int[ lines.size() ];
         int[] iToFieldNumberEnd = new int[ lines.size() ];
         for( i = 0 ; i < lines.size() ; i++ ) {
-
             iToFieldNumberBeg[i] = lines.get(i).getPosition1().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(i).getPosition1().getX();
             iToFieldNumberEnd[i] = lines.get(i).getPosition2().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(i).getPosition2().getX();
-            if( ! graphCnt.contains( iToFieldNumberBeg[i] )) {
-                graphCnt.add( iToFieldNumberBeg[i] );
+            if( ! graphVertex.contains( iToFieldNumberBeg[i] )) {
+                graphVertex.add( iToFieldNumberBeg[i] );
+                System.out.println( "logBeg: " + iToFieldNumberBeg[i] );
             }
-            if( ! graphCnt.contains( iToFieldNumberEnd[i] )) {
-                graphCnt.add( iToFieldNumberBeg[i] );
+            if( ! graphVertex.contains( iToFieldNumberEnd[i] )) {
+                graphVertex.add( iToFieldNumberEnd[i] );
+                System.out.println( "logEnd: " + iToFieldNumberEnd[i] );
             }
 
         }
 
         //  Определяем размер графа
-        graph = new int[ graphCnt.size() ][ graphCnt.size() ];
+        graph = new int[ graphVertex.size() ][ graphVertex.size() ];
 
         //Заполняем наш граф нулевыми значениями
         for( i = 0 ; i < graph.length ; i++ ) {
@@ -64,11 +64,13 @@ public class Graph {
             tmp1 = lines.get(i).getPosition1().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(i).getPosition1().getX();
             tmp2 = lines.get(i).getPosition2().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(i).getPosition2().getX();
             for( j = 0 ; j < lines.size() ; j++ ) {
+                if( i == j ) continue;
                 commonVertex = -1;
                 vertex1 = -1;
                 vertex2 = -1;
                 tmp3 = lines.get(j).getPosition1().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(j).getPosition1().getX();
                 tmp4 = lines.get(j).getPosition2().getY() * ChessBoard.CHESSBOARD_FIELDS_COUNT + lines.get(j).getPosition2().getX();
+                System.out.println("tmp1:"+tmp1+" tmp2:"+tmp2+" tmp3:"+tmp3+" tmp4:"+tmp4);
                 if( tmp1 == tmp3 ) {
                     commonVertex = tmp1;
                     vertex1      = tmp2;
@@ -93,20 +95,22 @@ public class Graph {
                 int vertex1Index      = -1;
                 int vertex2Index      = -1;
                 if( commonVertex >= 0 ) {
-                    for( k = 0 ; k < graphCnt.size() ; k++ ) {
-                        if( graphCnt.get(k) == commonVertex ) {
+                    for( k = 0 ; k < graphVertex.size() ; k++ ) {
+                        if( graphVertex.get(k) == commonVertex ) {
                             commonVertexIndex = k;
                         }
-                        if( graphCnt.get(k) == vertex1 ) {
+                        if( graphVertex.get(k) == vertex1 ) {
                             vertex1Index = k;
                         }
-                        if( graphCnt.get(k) == vertex2 ) {
+                        if( graphVertex.get(k) == vertex2 ) {
                             vertex2Index = k;
                         }
                     }
                     if( commonVertexIndex >= 0 ) {
                         graph[commonVertexIndex][vertex1Index] = 1;
                         graph[commonVertexIndex][vertex2Index] = 1;
+                        graph[vertex1Index][commonVertexIndex] = 1;
+                        graph[vertex2Index][commonVertexIndex] = 1;
                     }
                 }
             }
@@ -118,43 +122,57 @@ public class Graph {
             }
             System.out.println();
         }
-
-
-
     }
 
-    public void getShortestRoute() {
-        if( true ) return;
-        if( lines.size() == 0 ) return;
-        // Алгорит Дейкстры по поиску кратчайшего пути по вершинам графа
-        int i,j,v,u,l;
-        int[] H = new int[graph.length];
 
-        int[] T = new int[graph.length];
-        int[] X = new int[graph.length];
-        for( i = 0 ; i < lines.size() ; i++ ) {
-            T[i] = 999999;
-            X[i] = 0;
+    public void getShortestRoute( int x1 , int y1 , int x2 , int y2  ) {
+        if( lines.size() < 1 ) return;
+        int position1 = y1 * ChessBoard.CHESSBOARD_FIELDS_COUNT + x1;
+        int position2 = y2 * ChessBoard.CHESSBOARD_FIELDS_COUNT + x2;
+
+        int v,u,l;
+        int p = graph.length;
+        int s = -1;
+        int t = -1;
+
+        for( u = 0 ; u < graphVertex.size() ; u++ ) {
+            if( position1 == graphVertex.get(u) ) {
+                s = u;
+            }
+            if( position2 == graphVertex.get(u) ) {
+                t = u;
+            }
         }
-        H[0] = 0;
-        T[0] = 0;
-        X[0] = 1;
-        v    = 0;
 
-        int t = graph.length - 1;
+        System.out.println( "s:" + s + " t:" + t);
+        System.out.println( "p1:" + position1 + " p2:" + position2 );
+        // Алгорит Дейкстры по поиску кратчайшего пути по вершинам графа
+        int[] H = new int[p];
+
+        int[] T = new int[p];
+        int[] X = new int[p];
+        for( u = 0 ; u < p ; u++ ) {
+            T[u] = 999999;
+            X[u] = 0;
+        }
+        H[s] = 0;
+        T[s] = 0;
+        X[s] = 1;
+        v    = s;
+
         while ( true ) {
-            for ( i = 0 ; i < graph.length ; i++ ) {
-                if( X[i] == 0 && T[i] > ( T[v] + graph[v][i]) ) {
-                    T[i] = T[v] + graph[v][i];
-                    H[i] = v;
+            for ( u = 1 ; u < p ; u++ ) {
+                if( X[u] == 0 && T[u] > ( T[v] + graph[v][u]) ) {
+                    T[u] = T[v] + graph[v][u];
+                    H[u] = v;
                 }
             }
             l = 9999999;
             v = 0;
-            for( i = 0 ; i < graph.length ; i++ ){
-                if( X[i] == 0 && T[i] < l ) {
-                    v = i;
-                    l = T[i];
+            for( u = 0 ; u < p ; u++ ){
+                if( X[u] == 0 && T[u] < l ) {
+                    v = u;
+                    l = T[u];
                 }
             }
             if( v == 0 ) {
@@ -164,12 +182,15 @@ public class Graph {
                 System.out.println( "Путь найден" );
                 break;
             } else {
-                X[v] = 1;
+                X[v] = 0;
             }
         }
 
-        for ( i = 0 ; i < H.length ; i++ ) {
-            System.out.println( H[i] );
+        for ( u = 0 ; u < H.length ; u++ ) {
+            System.out.println( "H[" + u + "]: " + H[u] );
+        }
+        for ( u = 0 ; u < T.length ; u++ ) {
+            System.out.println( "T[" + u + "]: " + T[u] );
         }
 
     }
