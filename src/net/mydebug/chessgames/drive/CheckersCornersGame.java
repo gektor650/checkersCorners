@@ -9,9 +9,11 @@ import net.mydebug.chessgames.drive.figures.Figure;
 import net.mydebug.chessgames.drive.figures.FigureData;
 import net.mydebug.chessgames.drive.figures.MoveLine;
 import net.mydebug.chessgames.drive.figures.Position;
-
-
 import com.badlogic.androidgames.framework.Game;
+
+/**
+ * Собственно говоря наша игра в Уголки
+ */
 
 public class CheckersCornersGame extends ChessBoard {
 
@@ -20,7 +22,7 @@ public class CheckersCornersGame extends ChessBoard {
 	public CheckersCornersGame( Game game , boolean newGame ) {
 		super(game , newGame );
         if( gameMode == ONE_PLAYER ) {
-            AiModel = new CheckersCornersAi( aiColor , (ChessBoard) this );
+            AiModel = new CheckersCornersAi( aiColor , this );
             if( playerColor == Figure.BLACK ) {
                 AiModel.move();
             }
@@ -69,7 +71,7 @@ public class CheckersCornersGame extends ChessBoard {
 	}
 
 	@Override
-	protected void buildTips( int figureIndex , int x , int y ) {
+	public void buildTips( int figureIndex , int x , int y ) {
 		if( figures.get(figureIndex).getColor() == getTurn() ) {
 			tips      = figures.get(figureIndex).getAviableMoves();
 			tipsLines = figures.get(figureIndex).getAviableDirectionsLines();
@@ -105,9 +107,9 @@ public class CheckersCornersGame extends ChessBoard {
 	@Override
 	public void setFiguresByFiguresData( ArrayList<FigureData> figureData ) {
 		figures = new ArrayList<Figure>();
-		for( int i = 0 ; i < figureData.size() ; i++ ) {
-			figures.add( new CheckerCorners( figureData.get(i).color, figureData.get(i).x , figureData.get(i).y , this ) );	
-		}
+        for (FigureData aFigureData : figureData) {
+            figures.add(new CheckerCorners(aFigureData.color, aFigureData.x, aFigureData.y, this));
+        }
 	
 	}
 

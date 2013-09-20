@@ -31,6 +31,7 @@ public abstract class ChessBoard  {
 	protected List<Figure>   figures         = new ArrayList<Figure>();
 	protected List<Position> tips            = new ArrayList<Position>();
 	protected List<MoveLine> tipsLines 		 = new ArrayList<MoveLine>();
+	protected List<MoveLine> aiLines 		 = new ArrayList<MoveLine>();
     protected Ai      AiModel;
     protected History history;
 	private float[] pixelToPositionX = new float[9];
@@ -267,13 +268,13 @@ public abstract class ChessBoard  {
     
     public void move( int figureIndex , Position position) {
         // Для графа отправляем точки откуда\куда ход
-        if( whoseTurn == playerColor ) {
+        if( whoseTurn != playerColor && gameMode == ONE_PLAYER || gameMode == TWO_PLAYERS ) {
             int x1 = figures.get( figureIndex ).getX();
             int y1 = figures.get( figureIndex ).getY();
             int x2 = position.x;
             int y2 = position.y;
             Graph graph = new Graph( tipsLines );
-            graph.getShortestRoute( x1 , y1 , x2 , y2 );
+            aiLines     = graph.getShortestRoute( x1 , y1 , x2 , y2 );
         }
         //Передвигаем фигуру
         figures.get( figureIndex ).setPosition( position.x, position.y);
@@ -327,6 +328,7 @@ public abstract class ChessBoard  {
     	this.drawBottomMenu();
         this.drawInfo();
         this.drawGameTime();
+        this.drawAiLines();
 
 //    	this.drawGrid();
     }
@@ -362,6 +364,13 @@ public abstract class ChessBoard  {
             }
 
 		}
+	}
+
+    private void drawAiLines() {
+			// Рисуем линии, которые подсказывают траэкторию хода противника
+            for (MoveLine line : aiLines) {
+                game.getGraphics().drawLine((int) (getXPixel(line.position1.x) + fieldHeight / 2), (int) (getYPixel(line.position1.y) + fieldHeight / 2), (int) (getXPixel(line.position2.x) + fieldHeight / 2), (int) (getYPixel(line.position2.y) + fieldHeight / 2), 0x66ff0000, 2);
+            }
 	}
     
 	private void highlightFieldBorder( Position position , int color ) {

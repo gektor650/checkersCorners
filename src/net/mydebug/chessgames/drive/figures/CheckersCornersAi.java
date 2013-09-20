@@ -6,16 +6,17 @@ import java.util.Random;
 
 import android.util.Log;
 
+import net.mydebug.chessgames.drive.CheckersCornersGame;
 import net.mydebug.chessgames.drive.ChessBoard;
 
 public class CheckersCornersAi implements Ai {
 
 	int [][] priorities;
-	ChessBoard board;
+    CheckersCornersGame board;
 	int color;
     int level = 0;
 	
-	public CheckersCornersAi( int color , ChessBoard board ) {
+	public CheckersCornersAi( int color , CheckersCornersGame board ) {
 		this.board = board;
 		this.color = color;
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
@@ -55,7 +56,9 @@ public class CheckersCornersAi implements Ai {
 		if( result == null ) return;
 
 		board.setAiTurnShowField( board.getFigures().get(result.figureIndex).getPosition() , result.position);
-		board.move( result.figureIndex , result.position );
+        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
+
+        board.move( result.figureIndex , result.position );
 	}
 	
 	public FigureAndPosition calcFigureAndPositionOfBestMove( List<Figure> figures ) {
