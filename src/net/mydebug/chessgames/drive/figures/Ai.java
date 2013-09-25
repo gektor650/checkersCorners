@@ -1,5 +1,8 @@
 package net.mydebug.chessgames.drive.figures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface Ai {
 	public void move();
 	
@@ -11,6 +14,25 @@ public interface Ai {
         }
 		public Position position;
 		public int figureIndex;
-        public int weight;
+        protected List<Integer> weight = new ArrayList<Integer>();
+        protected int weightInt = -99;
+
+        private void buildWeight( int depth ) {
+            if( this.weight.size() <= depth ) {
+                for ( int i = this.weight.size() ; i <= depth ; i++ ) {
+                    this.weight.add(-999);
+                }
+            }
+        }
+
+        public void setWeight( int weight , int checkDepth ) {
+            buildWeight( checkDepth );
+            this.weight.set( checkDepth , weight );
+        }
+
+        public int getWeight(  int checkDepth ) {
+            buildWeight( checkDepth );
+            return this.weight.get( checkDepth );
+        }
 	}
 }

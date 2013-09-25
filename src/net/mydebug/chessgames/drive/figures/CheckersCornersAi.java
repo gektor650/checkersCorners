@@ -19,6 +19,8 @@ public class CheckersCornersAi implements Ai {
 	public CheckersCornersAi( int color , CheckersCornersGame board ) {
 		this.board = board;
 		this.color = color;
+        this.level = board.getGameLevel()+1;
+
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
         level = board.getSettings().getGameLevel();
 		if( color == Figure.WHITE ) {
@@ -36,11 +38,11 @@ public class CheckersCornersAi implements Ai {
 
 			priorities[1] = new int[]{1038, 1037, 1036, 37, 35, 33, 32, 28 };
 
-			priorities[2] = new int[]{1037, 1036, 1035, 39, 36, 34, 31, 27 };
+			priorities[2] = new int[]{1037, 1036, 1035, 38, 36, 34, 31, 27 };
 
 			priorities[3] = new int[]{1036, 1035, 1034, 38, 37, 33, 29, 26 };
 
-			priorities[4] = new int[]{35  , 39  , 38  , 36, 33, 30, 27, 24 };
+			priorities[4] = new int[]{35  , 38  , 38  , 36, 33, 30, 27, 24 };
 
 			priorities[5] = new int[]{34  , 35  , 34  , 32, 30, 28, 26, 23 };
 
@@ -52,67 +54,51 @@ public class CheckersCornersAi implements Ai {
 	}
 	
 	public void move() {
-		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() );
-		if( result == null ) return;
-
-		board.setAiTurnShowField( board.getFigures().get(result.figureIndex).getPosition() , result.position);
+        board.save();
+		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
+        board.load();
+		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
         board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
 
         board.move( result.figureIndex , result.position );
 	}
-	
-	public FigureAndPosition calcFigureAndPositionOfBestMove( List<Figure> figures ) {
+
+    /**
+     * Рекурсивная функция просчета весов возможных ходов фигур.
+     * @param figures - фигуры на шахматной доске
+     * @param depth   - сколько раз проверять рекурсивно ходы фигур (для каждой фигуры depth раз остальные фигуры)
+     * @return результат из индекс фигуры с максимальным весом хода , позицию максимального хода, вес хода
+     */
+	public FigureAndPosition calcFigureAndPositionOfBestMove( List<Figure> figures , int depth ) {
 		int bestResult = -99;
 		int currWeight = 0;
 		int tmp;
-		List positions;
+
+		List<Position> positions;
         FigureAndPosition result = new FigureAndPosition();
-        Random rand              = new Random();
 
-        if( level == 1 ) {
-            if( rand.nextInt(1) == 1 ) {
-                level = 2;
-            }
-        }
-
-        if( level == 2 ) {
-            for( int i = 0 ; i < figures.size() ; i++ ) {
-                if( figures.get(i).getColor() != color ) continue;
-                positions  = figures.get(i).getAviableMoves();
-                currWeight = positionToFieldWeight( figures.get(i).getPosition() );
-                for (Object position : positions) {
-                    tmp = positionToFieldWeight((Position) position) - currWeight;
-                    if (tmp > bestResult) {
-                        bestResult = tmp;
-                        result.figureIndex = i;
-                        result.position = (Position) position;
-                    }
+        for( int i = 0 ; i < figures.size() ; i++ ) {
+            if( figures.get(i).getColor() != color ) continue;
+            Position tmpPosition1 = figures.get(i).getPosition();
+            positions  = figures.get(i).getAviableMoves();
+            currWeight = positionToFieldWeight( figures.get(i).getPosition() );
+            for ( Position position : positions ) {
+                tmp = positionToFieldWeight( position ) - currWeight;
+                if( depth > 0 ) {
+                    Position tmpPosition2 = figures.get(i).getPosition();
+                    figures.get(i).setPosition( position );
+                    result = calcFigureAndPositionOfBestMove( figures , depth - 1 );
+                    tmp   += result.weightInt;
+                    figures.get(i).setPosition( tmpPosition2 );
                 }
-            }
-        } else {
-            /*
-            Самый слабый уровень AI - перезаписываем результат(ход, который сделает AI) случайное количество раз и
-            до тех пор, пока не будет найден ход,
-            который продвинет шашку вперед(вес теперешнего расположения меньше
-             чем весом возможного хода).
-             */
-            int randIndex    = rand.nextInt( figures.size() / 2 );
-            int aiFiguresCnt = 0;
-            FIGURES : for( int i = 0 ; i < figures.size() ; i++ ) {
-                if( figures.get( i ).getColor() != color ) continue;
-                aiFiguresCnt++;
-                positions  = figures.get(i).getAviableMoves();
-                if( positions.size() < 1 ) continue;
-                currWeight  = positionToFieldWeight( figures.get(i).getPosition() );
-                for (Object position : positions) {
-                    tmp = positionToFieldWeight((Position) position) - currWeight;
+                if (tmp > bestResult ) {
+                    bestResult         = tmp;
+                    result.weightInt   = bestResult;
                     result.figureIndex = i;
-                    result.position    = (Position) position;
-                    if ( tmp > 0 && randIndex < aiFiguresCnt ) {
-                        break FIGURES;
-                    }
+                    result.position    = position;
                 }
             }
+            figures.get(i).setPosition( tmpPosition1 );
         }
 
 		return result;

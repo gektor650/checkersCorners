@@ -432,13 +432,13 @@ public abstract class ChessBoard  {
         Pixmap pixmap = game.getGraphics().newPixmap( "numbers.jpg" , PixmapFormat.RGB565 );
         game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 20 , 0 , 20 * ( seconds % 10 ) , 0 ,
         21  , 30 );
-        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 40 , 0 , 20 * ( (int) seconds / 10 ) , 0 ,
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 40 , 0 , 20 * ( seconds / 10 ) , 0 ,
         21  , 30 );
         game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 60 , 0 , 200 , 0 ,
         21  , 30 );
         game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 80 , 0 , 20 * ( minutes % 10 ) , 0 ,
         21  , 30 );
-        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 100 , 0 , 20 * ( (int) minutes / 10 ) , 0 ,
+        game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 100 , 0 , 20 * ( minutes / 10 ) , 0 ,
         21  , 30 );
         game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 120 , 0 , 200 , 0 ,
         21  , 30 );
@@ -456,9 +456,12 @@ public abstract class ChessBoard  {
         if( gameMode == ChessBoard.TWO_PLAYERS ) {
             turnId = turnId / 2 ;
         }
-		game.getGraphics().drawText( "Moves сount: " + String.valueOf( turnId )  ,  32 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
-		game.getGraphics().drawText( " - move "  ,  30 , 20 , 20 , 0xff000000 , Paint.Align.LEFT );
-		Pixmap pixmap;
+        Pixmap pixmap;
+        pixmap = game.getGraphics().newPixmap( "movesCount.png" , PixmapFormat.RGB565 );
+        game.getGraphics().drawPixmap( pixmap  , 32 , game.getGraphics().getHeight() - 32 );
+        game.getGraphics().drawText( String.valueOf( turnId )  , 162 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
+        pixmap = game.getGraphics().newPixmap( "move.png" , PixmapFormat.RGB565 );
+        game.getGraphics().drawPixmap( pixmap  , 32 , 0 );
 		if( whoseTurn == 0 )
 			pixmap = game.getGraphics().newPixmap( "checkerBlack1.png" , PixmapFormat.RGB565 );
 		else
@@ -533,6 +536,14 @@ public abstract class ChessBoard  {
 
     public Settings getSettings() {
         return settings;
+    }
+
+    public void save() {
+        history.save( this );
+    }
+
+    public void load() {
+        history.back();
     }
 	
     protected abstract void initializeFigures();

@@ -56,6 +56,11 @@ public abstract class Figure  {
 		this.x     = x;
 		this.y     = y;
 	}
+
+	public void setPosition( Position position ) {
+		x = position.getX();
+        y = position.getY();
+	}
 	public Position getPosition() {
 		return new Position(x,y);
 	}
