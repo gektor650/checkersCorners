@@ -3,7 +3,7 @@ package net.mydebug.chessgames.drive.figures;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface Ai {
+public interface Ai extends Runnable {
 	public void move();
 	
 	class FigureAndPosition {

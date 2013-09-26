@@ -23,6 +23,7 @@ public class CheckersCornersAi implements Ai {
 
 		priorities = new int[board.getBoardLength()][board.getBoardLength()];
         level = board.getSettings().getGameLevel();
+        // Массив приоритетов полей
 		if( color == Figure.WHITE ) {
 			priorities[0] = new int[]{ 1  , 22  , 23  , 24, 25, 26, 27, 28 };
             priorities[1] = new int[]{22  , 24  , 26  , 28, 30, 32, 34, 36 };
@@ -54,13 +55,12 @@ public class CheckersCornersAi implements Ai {
 	}
 	
 	public void move() {
-        board.save();
-		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
-        board.load();
-		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
-        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
-
-        board.move( result.figureIndex , result.position );
+//		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
+//		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
+//        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
+//
+//        board.move( result.figureIndex , result.position );
+        this.run();
 	}
 
     /**
@@ -75,7 +75,8 @@ public class CheckersCornersAi implements Ai {
 		int tmp;
 
 		List<Position> positions;
-        FigureAndPosition result = new FigureAndPosition();
+        FigureAndPosition result    = new FigureAndPosition();
+        FigureAndPosition resultTmp;
 
         for( int i = 0 ; i < figures.size() ; i++ ) {
             if( figures.get(i).getColor() != color ) continue;
@@ -87,8 +88,8 @@ public class CheckersCornersAi implements Ai {
                 if( depth > 0 ) {
                     Position tmpPosition2 = figures.get(i).getPosition();
                     figures.get(i).setPosition( position );
-                    result = calcFigureAndPositionOfBestMove( figures , depth - 1 );
-                    tmp   += result.weightInt;
+                    resultTmp = calcFigureAndPositionOfBestMove( figures , depth - 1 );
+                    tmp   += resultTmp.weightInt;
                     figures.get(i).setPosition( tmpPosition2 );
                 }
                 if (tmp > bestResult ) {
@@ -109,4 +110,12 @@ public class CheckersCornersAi implements Ai {
     }
 
 
+    @Override
+    public void run() {
+        FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
+        board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
+        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
+
+        board.move( result.figureIndex , result.position );
+    }
 }
