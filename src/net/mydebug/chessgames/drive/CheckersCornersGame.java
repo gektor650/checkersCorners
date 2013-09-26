@@ -17,8 +17,6 @@ import com.badlogic.androidgames.framework.Game;
 
 public class CheckersCornersGame extends ChessBoard {
 
-    protected int time;
-
 	public CheckersCornersGame( Game game , boolean newGame ) {
 		super(game , newGame );
         if( gameMode == ONE_PLAYER ) {
@@ -55,6 +53,7 @@ public class CheckersCornersGame extends ChessBoard {
 
 	@Override
 	protected void initializeFigures() {
+        figures = new ArrayList<Figure>();
 		int i,j;
 		for( i = 0 ; i < getBoardLength() / 2; i++  ) {
 			for( j = 0 ; j < 3 ; j++ ) {

@@ -1,17 +1,12 @@
 package net.mydebug.chessgames.drive.figures;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import android.util.Log;
-
 import net.mydebug.chessgames.drive.CheckersCornersGame;
-import net.mydebug.chessgames.drive.ChessBoard;
 
 public class CheckersCornersAi implements Ai {
 
 	int [][] priorities;
+
     CheckersCornersGame board;
 	int color;
     int level = 0;
@@ -19,48 +14,46 @@ public class CheckersCornersAi implements Ai {
 	public CheckersCornersAi( int color , CheckersCornersGame board ) {
 		this.board = board;
 		this.color = color;
-        this.level = board.getGameLevel()+1;
+        level      = board.getSettings().getGameLevel() ;
 
-		priorities = new int[board.getBoardLength()][board.getBoardLength()];
-        level = board.getSettings().getGameLevel();
-        // Массив приоритетов полей
+        priorities = new int[board.getBoardLength()][board.getBoardLength()];
+        // Массив приоритетов полей для АИ черных фигур
+        priorities[0] = new int[]{44, 43, 40, 36, 35, 33, 32, 29 };
+
+        priorities[1] = new int[]{43, 42, 40, 37, 35, 33, 32, 28 };
+
+        priorities[2] = new int[]{42, 41, 40, 38, 36, 34, 31, 27 };
+
+        priorities[3] = new int[]{40, 40, 39, 37, 36, 33, 29, 26 };
+
+        priorities[4] = new int[]{35, 38, 37, 36, 33, 30, 27, 25 };
+
+        priorities[5] = new int[]{34, 35, 34, 32, 30, 28, 26, 23 };
+
+        priorities[6] = new int[]{32, 33, 31, 29, 27, 26, 24, 22 };
+
+        priorities[7] = new int[]{31, 31, 29, 27, 25, 23, 22, 20 };
+
+        // Если цвет АИ белый - инвертинуем наши приоритеты полей
 		if( color == Figure.WHITE ) {
-			priorities[0] = new int[]{ 1  , 22  , 23  , 24, 25, 26, 27, 28 };
-            priorities[1] = new int[]{22  , 24  , 26  , 28, 30, 32, 34, 36 };
-            priorities[2] = new int[]{24  , 28  , 34  , 36, 40, 42, 40, 38 };
-            priorities[3] = new int[]{28  , 36  , 38  , 39, 48, 46, 44, 42 };
-            priorities[4] = new int[]{25, 30, 39, 40, 47, 1034, 1035, 1036 };
-            priorities[5] = new int[]{26, 32, 38, 41, 46, 1035, 1036, 1037 };
-            priorities[6] = new int[]{27, 34, 41, 42, 45, 1036, 1037, 1038 };
-            priorities[7] = new int[]{28, 36, 40, 42, 44, 1037, 1038, 1040 };
+            int[][] prioritiesReverse = new int[board.getBoardLength()][board.getBoardLength()];
+            for( int i = 0 ; i < priorities.length ; i++ ) {
+                for( int j = 0 ; j < priorities.length ; j++) {
+                    prioritiesReverse[i][j] = priorities[ priorities.length - i - 1 ][ priorities.length - j - 1 ];
+                }
+            }
+            priorities = prioritiesReverse;
 
-		} else {
-			priorities[0] = new int[]{1039, 1038, 1037, 36, 35, 33, 32, 29 };
-
-			priorities[1] = new int[]{1038, 1037, 1036, 37, 35, 33, 32, 28 };
-
-			priorities[2] = new int[]{1037, 1036, 1035, 38, 36, 34, 31, 27 };
-
-			priorities[3] = new int[]{1036, 1035, 1034, 38, 37, 33, 29, 26 };
-
-			priorities[4] = new int[]{35  , 38  , 38  , 36, 33, 30, 27, 24 };
-
-			priorities[5] = new int[]{34  , 35  , 34  , 32, 30, 28, 26, 23 };
-
-			priorities[6] = new int[]{32  , 33  , 31  , 29, 27, 26, 24, 22 };
-
-			priorities[7] = new int[]{31  , 31  , 29  , 27, 25, 23, 22,  1 };
-			
-		}
+        }
 	}
 	
 	public void move() {
-//		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
-//		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
-//        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
-//
-//        board.move( result.figureIndex , result.position );
-        this.run();
+		FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
+		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
+        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
+//        System.out.println("---------------------");
+//        System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
+        board.move( result.figureIndex , result.position );
 	}
 
     /**
@@ -89,17 +82,18 @@ public class CheckersCornersAi implements Ai {
                     Position tmpPosition2 = figures.get(i).getPosition();
                     figures.get(i).setPosition( position );
                     resultTmp = calcFigureAndPositionOfBestMove( figures , depth - 1 );
-                    tmp   += resultTmp.weightInt;
+                    tmp   += resultTmp.weight;
                     figures.get(i).setPosition( tmpPosition2 );
                 }
                 if (tmp > bestResult ) {
                     bestResult         = tmp;
-                    result.weightInt   = bestResult;
+                    result.weight      = bestResult;
                     result.figureIndex = i;
                     result.position    = position;
                 }
             }
             figures.get(i).setPosition( tmpPosition1 );
+//            System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
         }
 
 		return result;
@@ -109,13 +103,4 @@ public class CheckersCornersAi implements Ai {
 		return priorities[ position.x ][ position.y ];
     }
 
-
-    @Override
-    public void run() {
-        FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
-        board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
-        board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
-
-        board.move( result.figureIndex , result.position );
-    }
 }

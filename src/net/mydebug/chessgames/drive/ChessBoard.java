@@ -76,6 +76,15 @@ public abstract class ChessBoard  {
 	
 	public ChessBoard(Game game , boolean isNew) {
         this.game = game;
+        newGame( isNew );
+    }
+
+    public void newGame( boolean isNew ) {
+        gameOver = false;
+        gameTime = 0;
+        aiLines   = new ArrayList<MoveLine>();
+        tipsLines = new ArrayList<MoveLine>();
+        tips      = new ArrayList<Position>();
         settings  = new Settings ( game.getActivity().getBaseContext().getFilesDir().toString() );
         history   = new History  ( game.getActivity() , isNew );
         statistic = new Statistic( game.getActivity() );
@@ -92,11 +101,11 @@ public abstract class ChessBoard  {
             aiColor     = Figure.BLACK;
             playerColor = Figure.WHITE;
         }
-    	chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
+        chessBoardImage = game.getGraphics().newPixmap("chessboard.png", PixmapFormat.RGB565 );
 
         activeFigure = -1;
-      	boardWidth   = game.getGraphics().getWidth();
-    	paddingY     = ( game.getGraphics().getHeight() - boardWidth ) / 2;
+        boardWidth   = game.getGraphics().getWidth();
+        paddingY     = ( game.getGraphics().getHeight() - boardWidth ) / 2;
         coefficient  = boardWidth / RAW_BODY_SIZE ;
         fieldWidth   = RAW_BODY_FIELD * coefficient;
 
@@ -104,11 +113,11 @@ public abstract class ChessBoard  {
         float startPointY  = RAW_BODY_PADDING * coefficient + paddingY;
 
         for(int i = 0 ; i < pixelToPositionX.length ; i++) {
-        	pixelToPositionX[i] = startPointX;
-        	startPointX += fieldWidth;
-        	pixelToPositionY[i] = startPointY;
-        	startPointY += fieldWidth;
-         }
+            pixelToPositionX[i] = startPointX;
+            startPointX += fieldWidth;
+            pixelToPositionY[i] = startPointY;
+            startPointY += fieldWidth;
+        }
 
         fieldHeight = fieldWidth;
         boardHeight = boardWidth;
@@ -119,15 +128,16 @@ public abstract class ChessBoard  {
         if( isNew ) {
             initializeFigures();
             setFiguresOnBoard();
+            history.clear();
             // Запоминаем изначальное расположение фигур, если пользователь ходит первым
             // если первым ходит AI - запоминаем после хода
             if( playerColor == Figure.WHITE || gameMode == TWO_PLAYERS )
                 history.save(this);
         } else {
-        	this.loadGameFromHistory();
-			if( isGameOver() != -1 ) {
-				gameOver();
-			}
+            this.loadGameFromHistory();
+            if( isGameOver() != -1 ) {
+                gameOver();
+            }
         }
 
         // Запускаем таймер времени игры
@@ -138,7 +148,7 @@ public abstract class ChessBoard  {
                 gameTime += 1;
             }
         }, 0, 1000);
-
+        draw();
     }
 	
     /** Обрабатываем нажатие на экран
@@ -148,34 +158,37 @@ public abstract class ChessBoard  {
     public void touch( int x , int y ) {
     	// Если нажали на шахматную доску
     	if( y > paddingY && y < game.getGraphics().getHeight() - paddingY ) {
-            if( gameOver ) return;
-        	// устанавливаем значение поля выходящее за пределы, потом будем проверять,
-        	// если поле от 0 до 7 - значит кликнули на клетку
-        	int fieldX = 99;
-        	int fieldY = 99;
-        	int i;
-        	int fieldsCnt = pixelToPositionX.length - 1 ;
-        	for( i = 0 ; i < fieldsCnt ; i++ ) {
-        		if( pixelToPositionX[i] < x && pixelToPositionX[i+1] > x) {
-        			fieldX = i;
-        			break;
-        		}
-        	}
-        	for( i = 0 ; i < fieldsCnt ; i++ ) {
-        		if( pixelToPositionY[i] < y && pixelToPositionY[i+1] > y) {
-        			fieldY = i;
-        			break;
-        		}
-        	}
-        	if( fieldX < CHESSBOARD_FIELDS_COUNT && fieldY < CHESSBOARD_FIELDS_COUNT ) {
-    			press( fieldX , fieldY );
-    			setFiguresOnBoard();
-    			draw();
-    			if( isGameOver() != -1 ) {
-    				gameOver();
-    			}
-    			
-        	}
+            if( ! gameOver ) {
+                // устанавливаем значение поля выходящее за пределы, потом будем проверять,
+                // если поле от 0 до 7 - значит кликнули на клетку
+                int fieldX = 99;
+                int fieldY = 99;
+                int i;
+                int fieldsCnt = pixelToPositionX.length - 1 ;
+                for( i = 0 ; i < fieldsCnt ; i++ ) {
+                    if( pixelToPositionX[i] < x && pixelToPositionX[i+1] > x) {
+                        fieldX = i;
+                        break;
+                    }
+                }
+                for( i = 0 ; i < fieldsCnt ; i++ ) {
+                    if( pixelToPositionY[i] < y && pixelToPositionY[i+1] > y) {
+                        fieldY = i;
+                        break;
+                    }
+                }
+                if( fieldX < CHESSBOARD_FIELDS_COUNT && fieldY < CHESSBOARD_FIELDS_COUNT ) {
+                    press( fieldX , fieldY );
+                    setFiguresOnBoard();
+                    draw();
+                    if( isGameOver() != -1 ) {
+                        gameOver();
+                    }
+
+                }
+            } else {
+                newGame(true);
+            }
         //если по вертикали мы попали в зону нижнего меню
     	} else if( y > game.getGraphics().getHeight() - 32 ) {
     		// Если нажали в левый нижний угол (иконка "ход назад")
@@ -194,16 +207,15 @@ public abstract class ChessBoard  {
     
     public void gameOver() {
         gameOver = true ;
-		String text = "";
         int winner = isGameOver();
-		if( winner == Figure.WHITE ) {
-			text = "White wins!";
+        Pixmap pixmap = null;
+        if( winner == Figure.WHITE ) {
+			pixmap = game.getGraphics().newPixmap( "gameOverWhiteWins.png" , Graphics.PixmapFormat.ARGB8888 );
 		} else if( winner == Figure.BLACK ){
-			text = "Black wins!";
-		}
+            pixmap = game.getGraphics().newPixmap( "gameOverBlackWins.png" , Graphics.PixmapFormat.ARGB8888 );
+        }
         game.getGraphics().drawRect(0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight() - 32, 0x99cccccc);
-        game.getGraphics().drawText( "Game over! " , game.getGraphics().getWidth() /2 , game.getGraphics().getHeight() /2 - 10 , 20, 0xffff0000);
-        game.getGraphics().drawText(text, game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2 + 10, 20, 0xffff0000);
+        game.getGraphics().drawPixmap( pixmap , game.getGraphics().getWidth() / 2 - 115 , game.getGraphics().getHeight() / 2 - 65 );
         drawBottomMenu();
         this.drawInfo();
         drawGameTime();
@@ -226,6 +238,7 @@ public abstract class ChessBoard  {
                 AiModel.move();
             }
         }
+        aiLines = new ArrayList<MoveLine>();
 		draw();	
     }
 
