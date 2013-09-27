@@ -80,14 +80,16 @@ public abstract class ChessBoard  {
     }
 
     public void newGame( boolean isNew ) {
-        gameOver = false;
-        gameTime = 0;
-        aiLines   = new ArrayList<MoveLine>();
-        tipsLines = new ArrayList<MoveLine>();
-        tips      = new ArrayList<Position>();
-        settings  = new Settings ( game.getActivity().getBaseContext().getFilesDir().toString() );
-        history   = new History  ( game.getActivity() , isNew );
-        statistic = new Statistic( game.getActivity() );
+        gameOver   = false;
+        gameTime   = 0;
+        aiTurnFrom = null;
+        aiTurnTo   = null;
+        aiLines    = new ArrayList<MoveLine>();
+        tipsLines  = new ArrayList<MoveLine>();
+        tips       = new ArrayList<Position>();
+        settings   = new Settings ( game.getActivity().getBaseContext().getFilesDir().toString() );
+        history    = new History  ( game.getActivity() , isNew );
+        statistic  = new Statistic( game.getActivity() );
 
         gameMode  = settings.getGameMode();
         boardTips = settings.getShowTips();
@@ -252,7 +254,7 @@ public abstract class ChessBoard  {
 	public void loadGameFromHistory() {
 		ArrayList<FigureData> figureDatas = history.loadLastTurn( );
 		if( figureDatas != null ) {
-			setFiguresByFiguresData( figureDatas );
+            setFiguresByFiguresData( figureDatas );
 			setFiguresOnBoard();
     		this.whoseTurn = history.lastWhosTurn();
             this.gameTime   = history.lastGameTime();

@@ -56,7 +56,7 @@ public class History implements HistoryInterface {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<FigureData> loadLastTurn( ) {
-		if( turnId <= 1 ) return null;
+		if( turnId < 1 ) return null;
 		@SuppressWarnings("unchecked")
 		ArrayList<FigureData>  data = (ArrayList)Serialize.deserialize( historyDb.getTurn( gameId , turnId ) );
 		return data;
