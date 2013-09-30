@@ -80,7 +80,7 @@ public class Settings {
 
     public void changeGameLevel() {
         settings.gameLevel++;
-        if( settings.gameLevel == 2 ) {
+        if( settings.gameLevel == 3 ) {
             settings.gameLevel = 0;
         }
     }

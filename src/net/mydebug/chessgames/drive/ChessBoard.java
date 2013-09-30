@@ -442,7 +442,7 @@ public abstract class ChessBoard  {
         if( timer == null ) return;
         int minutes = (int) gameTime / 60 ;
         int seconds = (int) gameTime % 60 ;
-        int hours   = (int) gameTime / 360;
+        int hours   = (int) gameTime / 3600;
 
         Pixmap pixmap = game.getGraphics().newPixmap( "numbers.jpg" , PixmapFormat.RGB565 );
         game.getGraphics().drawPixmap( pixmap, game.getGraphics().getWidth() - 20 , 0 , 20 * ( seconds % 10 ) , 0 ,

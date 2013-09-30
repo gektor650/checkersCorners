@@ -36,7 +36,6 @@ public class History implements HistoryInterface {
         for (Figure figure : figures) {
             data.add(new FigureData(figure.getX(), figure.getY(), figure.getColor(), figure.getType()));
         }
-        System.out.println("turnId : " + turnId);
 
         byte[] savedData = Serialize.serialize( data );
 
