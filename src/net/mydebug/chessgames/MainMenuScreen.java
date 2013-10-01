@@ -39,15 +39,15 @@ public class MainMenuScreen extends Screen{
 	public MainMenuScreen(Game game) {
 		super(game);
 		historyDb = new HistoryDb( game.getActivity() );
-		menus.add( new ImpossibleActions("New game" )) ;
+		menus.add( new ImpossibleActions("Новая игра" )) ;
 		if( historyDb.getCount() > 1 ) {
-			menus.add( new ImpossibleActions("Resume last game" )) ;	
+			menus.add( new ImpossibleActions("Продолжить игру" )) ;
 			onlyNewGame = false;
 		}
-		menus.add( new ImpossibleActions("Settings")) ;
-		menus.add( new ImpossibleActions("Statistics")) ;
-		menus.add( new ImpossibleActions("Say thanks")) ;
-		menus.add( new ImpossibleActions(   "Exit"   )) ;
+		menus.add( new ImpossibleActions("Настройки")) ;
+		menus.add( new ImpossibleActions("Статистика")) ;
+		menus.add( new ImpossibleActions("Оставить отзыв")) ;
+		menus.add( new ImpossibleActions(   "Выход"   )) ;
         int paddingUp = (int)( height * 0.2 ) ;
         padding  = ( height - paddingUp )  / menus.size() ;
 	}

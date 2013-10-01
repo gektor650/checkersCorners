@@ -27,7 +27,8 @@ public class SettingsScreen extends Screen {
     private void drawSettings() {
         Pixmap image = game.getGraphics().newPixmap("old_wood_and_paper_vector_1.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( image, 0, 0 , game.getGraphics().getWidth(), game.getGraphics().getHeight() );
-        game.getGraphics().drawText("Back", game.getGraphics().getWidth() - 60, game.getGraphics().getHeight() - 40, 20, 0xff000000);
+        image = game.getGraphics().newPixmap("back.png", Graphics.PixmapFormat.ARGB8888 );
+        game.getGraphics().drawPixmap( image, game.getGraphics().getWidth() - 100, game.getGraphics().getHeight() - 30 );
 
         int paddingX = game.getGraphics().getWidth() / 2 - 70;
         paddingY = ( game.getGraphics().getHeight() - 40 ) / 4  ;
@@ -105,9 +106,9 @@ public class SettingsScreen extends Screen {
                 history.clear();
 
 
-                if (event.y > game.getGraphics().getHeight() - 60) {
+                if (event.y > game.getGraphics().getHeight() - 35) {
                     // Если нажали в нижний правый угол (иконка выйти в меню)
-                    if (event.x > game.getGraphics().getWidth() - 80) {
+                    if (event.x > game.getGraphics().getWidth() - 100) {
                         game.setScreen(new MainMenuScreen(game));
                     }
                 }

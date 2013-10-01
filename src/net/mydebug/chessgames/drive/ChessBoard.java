@@ -476,12 +476,12 @@ public abstract class ChessBoard  {
         game.getGraphics().drawPixmap( pixmap  , 32 , game.getGraphics().getHeight() - 32 );
         game.getGraphics().drawText( String.valueOf( turnId )  , 162 , game.getGraphics().getHeight() - 10 , 20 , 0xff000000 , Paint.Align.LEFT );
         pixmap = game.getGraphics().newPixmap( "move.png" , PixmapFormat.RGB565 );
-        game.getGraphics().drawPixmap( pixmap  , 32 , 0 );
+        game.getGraphics().drawPixmap( pixmap  , 0 , 0 );
 		if( whoseTurn == 0 )
 			pixmap = game.getGraphics().newPixmap( "checkerBlack1.png" , PixmapFormat.RGB565 );
 		else
 			pixmap = game.getGraphics().newPixmap( "checkerWhite1.png" , PixmapFormat.RGB565 );
-		game.getGraphics().drawPixmap( pixmap  , 0 , 0 , 30 , 30 );
+		game.getGraphics().drawPixmap( pixmap  , 60 , 0 , 30 , 30 );
         pixmap.dispose();
     }
     

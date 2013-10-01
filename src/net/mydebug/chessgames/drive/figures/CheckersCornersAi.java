@@ -30,21 +30,21 @@ public class CheckersCornersAi implements Ai {
 
         priorities = new int[board.getBoardLength()][board.getBoardLength()];
         // Массив приоритетов полей для АИ черных фигур
-        priorities[0] = new int[]{56, 55, 52, 36, 35, 33, 32, 29 };
+        priorities[0] = new int[]{46, 45, 43, 33, 31, 30, 28, 26 };
 
-        priorities[1] = new int[]{55, 54, 52, 37, 36, 33, 32, 28 };
+        priorities[1] = new int[]{45, 44, 42, 33, 31, 29, 28, 25 };
 
-        priorities[2] = new int[]{54, 53, 52, 38, 37, 34, 31, 26 };
+        priorities[2] = new int[]{44, 43, 42, 32, 30, 29, 27, 24 };
 
-        priorities[3] = new int[]{52, 52, 51, 37, 36, 33, 29, 24 };
+        priorities[3] = new int[]{42, 42, 41, 31, 29, 27, 25, 23 };
 
-        priorities[4] = new int[]{39, 39, 38, 36, 33, 30, 27, 22 };
+        priorities[4] = new int[]{31, 31, 30, 29, 27, 26, 24, 22 };
 
-        priorities[5] = new int[]{35, 35, 34, 32, 30, 28, 26, 20 };
+        priorities[5] = new int[]{30, 29, 29, 27, 26, 25, 23, 20 };
 
-        priorities[6] = new int[]{33, 33, 31, 29, 27, 26, 24, 12 };
+        priorities[6] = new int[]{28, 28, 27, 25, 24, 23, 21, 19 };
 
-        priorities[7] = new int[]{28, 28, 26, 24, 22, 20, 12, 0 };
+        priorities[7] = new int[]{26, 25, 24, 23, 22, 20, 19, 16 };
 
         // Если цвет АИ белый - инвертинуем наши приоритеты полей
 		if( color == Figure.WHITE ) {
@@ -73,6 +73,9 @@ public class CheckersCornersAi implements Ai {
         board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
 //        System.out.println("---------------------");
 //        System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
+        System.out.println("С веса:" + positionToFieldWeight( board.getFigures().get(result.figureIndex).getPosition() ));
+        System.out.println("На вес:" + positionToFieldWeight( result.position ));
+
         board.move(result.figureIndex, result.position);
         movesHistory.get( result.figureIndex ).add( result.position.getY() * 8 + result.position.getX()  );
         //Если уровень сложности больше 0, то прощитываем сначала на n шагов вперед при первом ходе
@@ -80,11 +83,11 @@ public class CheckersCornersAi implements Ai {
 //        if( --level < 0 ) {
 //            level = board.getSettings().getGameLevel();
 //        }
-        System.out.println("Операций: " + operations );
+//        System.out.println("Операций: " + operations );
         System.out.println("Вес:"+result.weight);
         operations = 0;
         aiTurns++;
-        if( aiTurns % 30 == 0 ) {
+        if( aiTurns % 10 == 0 ) {
             clearMoveHistory();
         }
     }
@@ -152,8 +155,8 @@ public class CheckersCornersAi implements Ai {
             figures.get(i).setPosition( tmpPosition1 );
 //            System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
         }
-        System.out.println("Size: " + figures.size() );
-        System.out.println("Random: " + random );
+//        System.out.println("Size: " + figures.size() );
+//        System.out.println("Random: " + random );
         operations++;
 		return result;
 	}
