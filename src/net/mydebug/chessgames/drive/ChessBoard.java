@@ -95,6 +95,10 @@ public abstract class ChessBoard  {
         boardTips = settings.getShowTips();
         gameLevel = settings.getGameLevel();
 
+        if( AiModel != null ) {
+            AiModel.resetAi();
+        }
+
         if( settings.getPlayerColor() == Figure.BLACK )    {
             aiColor     = Figure.WHITE ;
             playerColor = Figure.BLACK;
@@ -231,12 +235,16 @@ public abstract class ChessBoard  {
     public void loadPrevFromHistory() {
 		ArrayList<FigureData> figureDatas = history.back( );
         if( figureDatas != null ) {
+            if( AiModel != null ) {
+                AiModel.resetAi();
+            }
             clearTips();
     		setFiguresByFiguresData( figureDatas );
     		setFiguresOnBoard();
     		this.whoseTurn = history.lastWhosTurn();
             this.gameTime   = history.lastGameTime();
             if( playerColor == Figure.BLACK && whoseTurn == Figure.WHITE && gameMode == ONE_PLAYER && history.getTurnId() > 0 ) {
+                AiModel.clearMoveHistory();
                 AiModel.move();
             }
         }
@@ -509,7 +517,12 @@ public abstract class ChessBoard  {
     public List<Figure> getFigures() {
     	return this.figures;
     }
-	// -1 - за предлелами поля, 0 - пусто, 1 - занято
+
+    /**
+     * Проверяем пустое ли поле
+     * @param position - искомое поле
+     * @return  int -1 - за предлелами поля, 0 - занято, 1 - пусто
+     */
 	public int checkFieldIsEmpty(Position position ) {
 		if( position.x < 0 || position.x > ChessBoard.CHESSBOARD_FIELDS_COUNT - 1 || position.y < 0 || position.y > ChessBoard.CHESSBOARD_FIELDS_COUNT - 1 ) 
 			return -1;
