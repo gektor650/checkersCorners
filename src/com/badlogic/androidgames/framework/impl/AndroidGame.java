@@ -1,6 +1,5 @@
 package com.badlogic.androidgames.framework.impl;
 
-import net.mydebug.chessgames.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;

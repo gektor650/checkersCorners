@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.mydebug.chessgames"
+    package="net.mydebug.corners"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -8,6 +8,7 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="17"
         />
+    <supports-screens/>
 
     <application
         android:allowBackup="true"
@@ -25,10 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      		<provider android:name="net.mydebug.chessgames.drive.db.HistoryProvider"
-   				android:authorities="net.mydebug.chessgames.drive.db.HistoryProvider"/>
-      		<provider android:name="net.mydebug.chessgames.drive.db.StatisticProvider"
-   				android:authorities="net.mydebug.chessgames.drive.db.StatisticProvider"/>
+      		<provider android:name=".drive.db.HistoryProvider"
+   				android:authorities="net.mydebug.corners.drive.db.HistoryProvider"/>
+      		<provider android:name=".drive.db.StatisticProvider"
+   				android:authorities="net.mydebug.corners.drive.db.StatisticProvider"/>
     </application>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
    	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
