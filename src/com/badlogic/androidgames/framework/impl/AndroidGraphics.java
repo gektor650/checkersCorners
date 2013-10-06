@@ -15,12 +15,12 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
 public class AndroidGraphics implements Graphics {
-    AssetManager assets;
-    Bitmap frameBuffer;
-    Canvas canvas;
-    Paint paint;
-    Rect srcRect = new Rect();
-    Rect dstRect = new Rect();
+    private AssetManager assets;
+    private Bitmap frameBuffer;
+    private Canvas canvas;
+    private Paint paint;
+    private Rect srcRect = new Rect();
+    private Rect dstRect = new Rect();
 
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;

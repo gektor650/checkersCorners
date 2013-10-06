@@ -15,10 +15,10 @@ import net.mydebug.corners.drive.db.HistoryDb;
  *  Класс используется для сохранения позиций фигур на шахматном поле и восстановления предыдущего хода
  */
 public class History implements HistoryInterface {
-	List<Figure> figures = new ArrayList<Figure>();
-	int 		  turnId = -1;
-	int 	      gameId = 1;
-	HistoryDb historyDb;
+	private List<Figure> figures = new ArrayList<Figure>();
+    private int 		  turnId = -1;
+    private int 	      gameId = 1;
+    private HistoryDb historyDb;
 	
 	public History( Activity activity , boolean isNew ) {
 		historyDb = new HistoryDb( activity );

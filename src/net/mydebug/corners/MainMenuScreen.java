@@ -57,7 +57,7 @@ public class MainMenuScreen extends Screen{
                                 case 3 :
                                     String appName = "net.mydebug.corners";
                                     try {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?pname=" + appName)));
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
                                     } catch (android.content.ActivityNotFoundException anfe) {
                                         game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
                                     }
@@ -72,7 +72,7 @@ public class MainMenuScreen extends Screen{
 		    	            	case 4 :
                                     String appName = "net.mydebug.corners";
                                     try {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?pname=" + appName)));
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
                                     } catch (android.content.ActivityNotFoundException anfe) {
                                         game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
                                     }
@@ -112,7 +112,7 @@ public class MainMenuScreen extends Screen{
         image = game.getGraphics().newPixmap("statistics.png", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( image , game.getGraphics().getWidth() / 2 - 90 , padding * ++i );
 
-        image = game.getGraphics().newPixmap("leaveReviews.png", Graphics.PixmapFormat.ARGB8888 );
+        image = game.getGraphics().newPixmap("leaveReview.png", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap( image , game.getGraphics().getWidth() / 2 - 90 , padding * ++i );
 
         image = game.getGraphics().newPixmap("exit.png", Graphics.PixmapFormat.ARGB8888 );

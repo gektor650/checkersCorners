@@ -9,7 +9,7 @@ import net.mydebug.corners.drive.ChessGame;
 
 public class CheckersCornersAi implements Ai {
 
-	int [][] priorities;
+    private int [][] priorities;
 
     private CheckersCornersGame board;
     private int color;
