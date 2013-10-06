@@ -339,8 +339,6 @@ public abstract class ChessGame {
     }
 
     public void draw() {
-//        game.getGraphics().clear(0xff000000);
-//        Pixmap chessBoardImage = game.getGraphics().newPixmap("13410109-vector-realistic-wood-texture-background-grey-color.jpg", Graphics.PixmapFormat.ARGB8888 );
         Pixmap chessBoardImage = game.getGraphics().newPixmap("950890_72529114.jpg", Graphics.PixmapFormat.ARGB8888 );
         game.getGraphics().drawPixmap(chessBoardImage, 0, 0, game.getGraphics().getWidth(), game.getGraphics().getHeight());
         chessBoardImage.dispose();
@@ -352,8 +350,6 @@ public abstract class ChessGame {
         this.drawInfo();
         this.drawGameTime();
         this.drawAiLines();
-
-//    	this.drawGrid();
     }
     
     
@@ -417,8 +413,7 @@ public abstract class ChessGame {
     }
     
     private void drawFigures() {
-    	int len = figures.size();
-    	for( int i = 0 ; i < len ; i++ ) {
+    	for( int i = 0 ; i < figures.size() ; i++ ) {
     		Figure figure = figures.get(i);
     		Pixmap pixmap;
     		if( i == activeFigure && getTurn() == figures.get(activeFigure).getColor() ) {
@@ -578,7 +573,7 @@ public abstract class ChessGame {
     protected abstract void buildTips( int figureIndex , int x , int y );
     protected abstract void press( int x , int y );
     protected abstract void setFiguresByFiguresData( ArrayList<FigureData> figureData );
-    // return color fins figures or -1 when game not over
+    // return color wins figures or -1 when game not over
     protected abstract int isGameOver();
 
 

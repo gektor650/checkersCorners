@@ -32,19 +32,27 @@ public class CheckersCornersGame extends ChessGame {
 	
 	@Override
 	protected void press(int x, int y) {
+        //определяем есть ли в данном поле фигура
 		int index = getFigureIndexByField(x,y);
+        // если это второе нажатие, а до этого мы нажимали на какую-то фигуру проверим может ли эта
+        // фигура ходить в место x y и перемещаем ее туда
 		if( activeFigure > -1 ) {
 			if( this.checkFieldIsEmpty( new Position( x , y )  ) == 1
 					&& getTurn() == figures.get( activeFigure ).getColor() ) {
+                // В прошлом нажатии в переменную tips были помещены возможные ходы текущей фигуры
+                // проверим, если эта фигура может ходить в данную клетку - перемещаем ее туда
                 for (Position tip : tips)
                     if (tip.x == x && tip.y == y) {
                         move(activeFigure, new Position(x, y));
                     }
 			}
+            // сбрасываем подсказки возможных ходов и активность фигуры
 			tips      = new ArrayList<Position>();
 			tipsLines = new ArrayList<MoveLine>();
 			activeFigure = -1;
-		} 
+		}
+        // если мы нажали на фигуру и у нас нет активной - заполняем переменную tips
+        // возможными ходами фигуры figures.get(index);
 		if( index > -1 && activeFigure == -1) {
 			buildTips( index , x , y );
 			activeFigure = index;

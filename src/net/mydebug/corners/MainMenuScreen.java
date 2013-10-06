@@ -2,6 +2,7 @@ package net.mydebug.corners;
 
 import java.util.List;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import com.badlogic.androidgames.framework.Pixmap;
@@ -41,56 +42,66 @@ public class MainMenuScreen extends Screen{
 		List<KeyEvent>     keyEvents = game.getInput().getKeyEvents();   
         int len = touchEvents.size();
 
-        
-        for(int j = 0; j < len; j++) {
-            TouchEvent event = touchEvents.get(j);
-            if( event.type != TouchEvent.TOUCH_UP ) continue;
-    		for(int i = 0 ; i < menuSize ; i++ ) {
-    			if( event.y < padding*(i+1)+30 && event.y > padding*(i+1) ) {
-    	            if( i == 0 ) {
-    	            	game.setScreen( new СheckersCornersScreen( game , true ) );
-    	            } else {
-                        if( onlyNewGame ) {
-    	            		switch( i ) {
-    	    	            	case 1 : game.setScreen( new SettingsScreen( game ) );break;
-                                case 2 : game.setScreen( new StatisticsScreen( game ) );break;
-                                case 3 :
-                                    String appName = "net.mydebug.corners";
+
+        for (TouchEvent event : touchEvents) {
+            if (event.type != TouchEvent.TOUCH_UP) continue;
+            for (int i = 0; i < menuSize; i++) {
+                if (event.y < padding * (i + 1) + 30 && event.y > padding * (i + 1)) {
+                    if (i == 0) {
+                        game.setScreen(new СheckersCornersScreen(game, true));
+                    } else {
+                        if (onlyNewGame) {
+                            switch (i) {
+                                case 1:
+                                    game.setScreen(new SettingsScreen(game));
+                                    break;
+                                case 2:
+                                    game.setScreen(new StatisticsScreen(game));
+                                    break;
+                                case 3:
                                     try {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
-                                    } catch (android.content.ActivityNotFoundException anfe) {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.mydebug.corners" )));
+                                    } catch (ActivityNotFoundException anfe) {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=net.mydebug.corners" )));
                                     }
                                     break;
-    	    	            	case 4 : System.exit(0);break;
-    	            		}
-    	            	} else {
-    	            		switch( i ) {
-		    	            	case 1 : game.setScreen( new СheckersCornersScreen( game , false ) );break;
-		    	            	case 2 : game.setScreen( new SettingsScreen( game ) );break;
-		    	            	case 3 : game.setScreen( new StatisticsScreen( game ) );break;
-		    	            	case 4 :
-                                    String appName = "net.mydebug.corners";
+                                case 4:
+                                    System.exit(0);
+                                    break;
+                            }
+                        } else {
+                            switch (i) {
+                                case 1:
+                                    game.setScreen(new СheckersCornersScreen(game, false));
+                                    break;
+                                case 2:
+                                    game.setScreen(new SettingsScreen(game));
+                                    break;
+                                case 3:
+                                    game.setScreen(new StatisticsScreen(game));
+                                    break;
+                                case 4:
                                     try {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName)));
-                                    } catch (android.content.ActivityNotFoundException anfe) {
-                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.mydebug.corners")));
+                                    } catch (ActivityNotFoundException anfe) {
+                                        game.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=net.mydebug.corners")));
                                     }
                                     break;
-		    	            	case 5 : System.exit(0);break;
-		            		}
-    	            	}
-	
-    	            }
-    			}
-    		}
+                                case 5:
+                                    System.exit(0);
+                                    break;
+                            }
+                        }
+
+                    }
+                }
+            }
         }
-        len = keyEvents.size();
-		for( int j = 0 ; j < len ; j ++ ) {
-			if( keyEvents.get(j).keyCode == android.view.KeyEvent.KEYCODE_BACK ) {
-				System.exit(0);
-			}
-		}
+        for (KeyEvent keyEvent : keyEvents) {
+            if (keyEvent.keyCode == android.view.KeyEvent.KEYCODE_BACK) {
+                System.exit(0);
+            }
+        }
 	}
 	public void drawMenu() {
 		g.clear(0xff964009);
