@@ -9,7 +9,6 @@ public class CheckerCorners extends Checker {
 
 	private List<Position>   turns;
 	ArrayList<Position>      possiblePositions    = new ArrayList<Position>();
-	ArrayList<MoveDirection> possibleDirections   = new ArrayList<MoveDirection>();
 	ArrayList<MoveLine>      possibleMovesLines   = new ArrayList<MoveLine>();
     ArrayList<Position>      alreadyChecked       = new ArrayList<Position>();
     MoveLine                 tmpMoveLineFullField;
@@ -24,12 +23,13 @@ public class CheckerCorners extends Checker {
 	}
 	
 	// Генерируем turns - куда может ходить шашка (позиции)
-	private void generateTurnsByPosition( Position position ) {
-		turns = new ArrayList<Position>();
+	private List<Position> generateTurnsByPosition( Position position ) {
+        List<Position>   turns = new ArrayList<Position>();
 		turns.add( new Position( position.x , position.y + 1 ) );
 		turns.add( new Position( position.x , position.y - 1 ) );
 		turns.add( new Position( position.x - 1 , position.y ) );
 		turns.add( new Position( position.x + 1 , position.y ) );
+        return turns;
 	}
 	
 	//рекурсивно проверяем возможные ходы фигуры по заданному направлению
@@ -57,8 +57,7 @@ public class CheckerCorners extends Checker {
 		if( empty == 1 ) {
 			
 			possiblePositions.add( position );
-			possibleDirections.add( direction );
-			if( tmpMoveLineFullField != null ) 
+			if( tmpMoveLineFullField != null )
 				possibleMovesLines.add( tmpMoveLineFullField );
             tmpMoveLineFullField = null;
 			possibleMovesLines.add( new MoveLine( tmpX , tmpY , position.x , position.y ) );
@@ -110,19 +109,19 @@ public class CheckerCorners extends Checker {
 
 	@Override
 	public List<Position> getAviableMoves() {
+        // переменные для результата
 		possiblePositions  = new ArrayList<Position>();
-		possibleDirections = new ArrayList<MoveDirection>();
 		possibleMovesLines = new ArrayList<MoveLine>();
+        // массив клеток, в которые мы уже проверяли (защита от зацикливания)
 		alreadyChecked     = new ArrayList<Position>();
-
-		generateTurnsByPosition( getPosition() );
+        // генерируем возможные ходы для этой фигуры - x+1;y , x;y+1, x-1;y , x;y-1.
+        List<Position>   turns = generateTurnsByPosition( getPosition() );
 		alreadyChecked.add( new Position( this.x, this.y ) );
         for (Position turn : turns) {
             int isEmpty = ChessGame.checkFieldIsEmpty(turn);
-            //если в поле пусто добавляем возможность хода
+            //если в поле пусто добавляем возможность хода на него
             if (isEmpty == 1) {
                 possiblePositions.add(turn);
-                possibleDirections.add(null);
                 possibleMovesLines.add(new MoveLine(this.x, this.y, turn.x, turn.y));
                 // проверяем можем ли мы перешагнуть через занятую клетку
             } else if (isEmpty == 0) {
