@@ -193,14 +193,14 @@ public class StatisticProvider extends ContentProvider {
         long rowId = db.insert(StatisticProviderMetaData.StatisticTableMetaData.TABLE_NAME,
                 StatisticProviderMetaData.StatisticTableMetaData.STATISTIC_FIGURES_COLOR, values);
         if (rowId > 0) {
-            Uri insertedBookUri =
+            Uri insertedStatisticUri =
                     ContentUris.withAppendedId(
                             StatisticProviderMetaData.StatisticTableMetaData.CONTENT_URI, rowId);
             getContext()
                     .getContentResolver()
-                    .notifyChange(insertedBookUri, null);
+                    .notifyChange(insertedStatisticUri, null);
 
-            return insertedBookUri;
+            return insertedStatisticUri;
         }
 
         throw new SQLException("Failed to insert row into " + uri);

@@ -78,20 +78,9 @@ public class CheckersCornersAi implements Ai {
         FigureAndPosition result = calcFigureAndPositionOfBestMove( board.getFigures() , level );
 		board.setAiTurnShowField(board.getFigures().get(result.figureIndex).getPosition(), result.position);
         board.buildTips(result.figureIndex, result.position.getX(), result.position.getY());
-//        System.out.println("---------------------");
-//        System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
-//        System.out.println("С веса:" + positionToFieldWeight( board.getFigures().get(result.figureIndex).getPosition() ));
-//        System.out.println("На вес:" + positionToFieldWeight( result.position ));
 
         board.move(result.figureIndex, result.position);
         movesHistory.get( result.figureIndex ).add( result.position.getY() * 8 + result.position.getX()  );
-        //Если уровень сложности больше 0, то прощитываем сначала на n шагов вперед при первом ходе
-        //при втором на n-1, пока не достингнем 0 уровня
-//        if( --level < 0 ) {
-//            level = board.getSettings().getGameLevel();
-//        }
-//        System.out.println("Операций: " + operations );
-//        System.out.println("Вес:"+result.weight);
         aiTurns++;
         if( aiTurns % 10 == 0 ) {
             clearMoveHistory();
@@ -101,12 +90,6 @@ public class CheckersCornersAi implements Ai {
         if( checkAlmostWin() ) {
             rebuildPriorities();
         }
-//        for( int i = 0 ; i < priorities.length ; i++ ) {
-//            for( int j = 0 ; j < priorities[i].length ; j++ ) {
-//                System.out.print( priorities[j][i] + " ");
-//            }
-//            System.out.println("");
-//        }
     }
 
     private boolean checkAlmostWin() {
@@ -288,16 +271,12 @@ public class CheckersCornersAi implements Ai {
                     result.position    = position;
                     // Для легкого уровня вносим хаотичность ходов
                     if( i > random && tmp > 0 ) {
-//                        System.out.println("Breaked on " + i);
                         break LABEL;
                     }
                 }
             }
             figures.get(i).setPosition( tmpPosition1 );
-//            System.out.println( "x:" + result.position.getX() + " y:" + result.position.getY() + " w:" + result.weight );
         }
-//        System.out.println("Size: " + figures.size() );
-//        System.out.println("Random: " + random );
 		return result;
 	}
 	

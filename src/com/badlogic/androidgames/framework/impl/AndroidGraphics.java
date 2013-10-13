@@ -41,12 +41,16 @@ public class AndroidGraphics implements Graphics {
 
         Options options = new Options();
         options.inPreferredConfig = config;
+        options.inJustDecodeBounds = false;
+        options.inDither = false;
+        options.inScaled = false;
+        options.inPreferredConfig = Config.ARGB_8888;
 
         InputStream in = null;
         Bitmap bitmap = null;
         try {
             in = assets.open(fileName);
-            bitmap = BitmapFactory.decodeStream(in);
+            bitmap = BitmapFactory.decodeStream(in , null , options );
             if (bitmap == null)
                 throw new RuntimeException("Couldn't load bitmap from asset '"
                         + fileName + "'");

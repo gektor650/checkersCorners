@@ -194,6 +194,9 @@ public abstract class ChessGame {
                 }
             } else {
                 newGame(true);
+                if( playerColor == Figure.BLACK && AiModel != null ) {
+                    AiModel.move();
+                }
             }
         //если по вертикали мы попали в зону нижнего меню
     	} else if( y > game.getGraphics().getHeight() - 32 ) {

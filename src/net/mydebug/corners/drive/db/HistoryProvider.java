@@ -211,14 +211,14 @@ public class HistoryProvider extends ContentProvider{
 	        long rowId = db.insert(HistoryTableMetaData.TABLE_NAME, 
 	        		HistoryTableMetaData.HISTORY_GAME_DATA, values);
 	        if (rowId > 0) {
-	            Uri insertedBookUri = 
+	            Uri insertedHistoryUri =
 	            	ContentUris.withAppendedId(
 	            			HistoryTableMetaData.CONTENT_URI, rowId);
 	            getContext()
 	               .getContentResolver()
-	                    .notifyChange(insertedBookUri, null);
+	                    .notifyChange(insertedHistoryUri, null);
 	            
-	            return insertedBookUri;
+	            return insertedHistoryUri;
 	        }
 
 	        throw new SQLException("Failed to insert row into " + uri);
