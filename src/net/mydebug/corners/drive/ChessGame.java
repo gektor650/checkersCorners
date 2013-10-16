@@ -20,6 +20,7 @@ import net.mydebug.corners.drive.figures.Figure;
 import net.mydebug.corners.drive.figures.FigureData;
 import net.mydebug.corners.drive.figures.MoveLine;
 import net.mydebug.corners.drive.figures.Position;
+import net.mydebug.corners.СheckersCornersScreen;
 
 public abstract class ChessGame {
 	private   Pixmap    chessBoardImage;
@@ -76,10 +77,7 @@ public abstract class ChessGame {
 	
 	public ChessGame(Game game, boolean isNew) {
         this.game = game;
-        newGame( isNew );
-    }
-
-    public void newGame( boolean isNew ) {
+        whoseTurn  = Figure.WHITE;
         gameOver   = false;
         gameTime   = 0;
         aiTurnFrom = null;
@@ -193,10 +191,7 @@ public abstract class ChessGame {
 
                 }
             } else {
-                newGame(true);
-                if( playerColor == Figure.BLACK && AiModel != null ) {
-                    AiModel.move();
-                }
+                game.setScreen( new СheckersCornersScreen( game , true ) );
             }
         //если по вертикали мы попали в зону нижнего меню
     	} else if( y > game.getGraphics().getHeight() - 32 ) {
